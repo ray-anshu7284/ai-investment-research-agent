@@ -128,9 +128,9 @@ export function Hero({ onAnalyze, loading }) {
           transition={{ duration: 0.7, delay: 0.05 }}
           className="text-center text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl md:text-7xl"
         >
-          <span className="text-gradient">Vortex Investment</span>
+          <span className="text-gradient">Apex Research</span>
           <br />
-          <span className="text-foreground">Research Terminal</span>
+          <span className="text-foreground">Investment Terminal</span>
         </motion.h1>
 
         <motion.p

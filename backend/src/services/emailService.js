@@ -35,7 +35,7 @@ export const sendWelcomeEmail = async (email) => {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Welcome to Vortex Research</title>
+      <title>Welcome to Apex Research</title>
       <style>
         body {
           margin: 0;
@@ -160,18 +160,18 @@ export const sendWelcomeEmail = async (email) => {
       <div class="wrapper">
         <div class="container">
           <div class="header">
-            <h1 class="logo">VORTEX <span>RESEARCH</span></h1>
+            <h1 class="logo">APEX <span>RESEARCH</span></h1>
           </div>
           <div class="body-content">
             <div class="badge">
               <span class="badge-dot"></span> Verified Subscription
             </div>
             <h2 class="title">You're officially on the list!</h2>
-            <p className="description">
-              Thank you for subscribing to the <strong>Vortex Weekly Digest</strong>. You will now receive high-quality, institutional-grade market insights directly in your inbox every Monday morning.
+            <p class="description">
+              Thank you for subscribing to the <strong>Apex Weekly Digest</strong>. You will now receive high-quality, institutional-grade market insights directly in your inbox every Monday morning.
             </p>
             
-            <p className="description" style="margin-bottom: 8px;"><strong>Here is what you will receive:</strong></p>
+            <p class="description" style="margin-bottom: 8px;"><strong>Here is what you will receive:</strong></p>
             <ul class="features-list">
               <li class="feature-item">
                 <span class="feature-icon">✓</span> Detailed public company deep-dives & valuations
@@ -189,12 +189,12 @@ export const sendWelcomeEmail = async (email) => {
             </p>
             <p class="description" style="margin-top: 16px; font-size: 13px; font-style: italic;">
               Best regards,<br>
-              <strong>The Vortex Engineering Team</strong>
+              <strong>The Apex Engineering Team</strong>
             </p>
           </div>
           <div class="footer">
-            <p>© ${year} Vortex Research Terminal. All rights reserved.</p>
-            <p>You received this because you subscribed to the Vortex Newsletter. If you wish to unsubscribe, you can <a href="#">unsubscribe here</a> at any time.</p>
+            <p>© ${year} Apex Research Terminal. All rights reserved.</p>
+            <p>You received this because you subscribed to the Apex Newsletter. If you wish to unsubscribe, you can <a href="#">unsubscribe here</a> at any time.</p>
             <p class="footer-note">For educational and research purposes only. This email does not constitute legal, tax, or investment advice.</p>
           </div>
         </div>
@@ -206,9 +206,9 @@ export const sendWelcomeEmail = async (email) => {
   if (transporter) {
     // Real mode: Send using NodeMailer SMTP Transporter
     const mailOptions = {
-      from: `"Vortex Research" <${process.env.EMAIL_USER}>`,
+      from: `"Apex Research" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: "Welcome to Vortex Research Terminal",
+      subject: "Welcome to Apex Research Terminal",
       html: emailHtml,
     };
     await transporter.sendMail(mailOptions);
@@ -218,8 +218,182 @@ export const sendWelcomeEmail = async (email) => {
     console.log(`\n======================================================`);
     console.log(`[Email Service] SANDBOX MODE (No SMTP credentials configured)`);
     console.log(`[Recipient]: ${email}`);
-    console.log(`[Subject]: Welcome to Vortex Research Terminal`);
+    console.log(`[Subject]: Welcome to Apex Research Terminal`);
     console.log(`[HTML Template]: (Simulating welcome receipt successfully)`);
     console.log(`======================================================\n`);
   }
 };
+
+/**
+ * Sends a notification email to the admin when a new user subscribes
+ * @param {string} subscriberEmail - The email address of the new subscriber
+ */
+export const sendAdminNotificationEmail = async (subscriberEmail) => {
+  const transporter = getTransporter();
+  const year = new Date().getFullYear();
+  const adminEmail = process.env.EMAIL_USER;
+
+  if (!adminEmail) return;
+
+  const emailHtml = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>New Subscriber Joined</title>
+      <style>
+        body {
+          margin: 0;
+          padding: 0;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+          background-color: #f8fafc;
+          color: #1e293b;
+        }
+        .wrapper {
+          width: 100%;
+          background-color: #f8fafc;
+          padding: 40px 0;
+        }
+        .container {
+          max-width: 600px;
+          margin: 0 auto;
+          background-color: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 16px;
+          overflow: hidden;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+        .header {
+          background-color: #0f172a;
+          padding: 32px;
+          text-align: center;
+        }
+        .logo {
+          font-size: 20px;
+          font-weight: 800;
+          letter-spacing: 0.1em;
+          color: #ffffff;
+          margin: 0;
+        }
+        .logo span {
+          color: #3b82f6;
+          font-size: 11px;
+          background-color: rgba(59, 130, 246, 0.15);
+          padding: 2px 6px;
+          border-radius: 4px;
+          margin-left: 6px;
+          font-family: monospace;
+          vertical-align: middle;
+        }
+        .body-content {
+          padding: 40px 32px;
+        }
+        .title {
+          font-size: 22px;
+          font-weight: 700;
+          margin-top: 0;
+          margin-bottom: 16px;
+          color: #0f172a;
+        }
+        .description {
+          font-size: 15px;
+          line-height: 1.6;
+          color: #475569;
+          margin-bottom: 24px;
+        }
+        .detail-box {
+          padding: 24px;
+          background-color: #f1f5f9;
+          border-radius: 12px;
+          margin: 24px 0;
+          border-left: 4px solid #3b82f6;
+        }
+        .detail-item {
+          font-size: 14px;
+          margin-bottom: 8px;
+          color: #334155;
+        }
+        .detail-item strong {
+          color: #0f172a;
+        }
+        .badge {
+          display: inline-flex;
+          align-items: center;
+          background-color: #dbeafe;
+          border: 1px solid #bfdbfe;
+          color: #1d4ed8;
+          font-size: 12px;
+          font-weight: 600;
+          padding: 4px 12px;
+          border-radius: 9999px;
+          margin-bottom: 20px;
+        }
+        .badge-dot {
+          height: 6px;
+          width: 6px;
+          background-color: #3b82f6;
+          border-radius: 50%;
+          margin-right: 6px;
+        }
+        .footer {
+          background-color: #f1f5f9;
+          padding: 24px 32px;
+          text-align: center;
+          font-size: 12px;
+          color: #64748b;
+          border-top: 1px solid #e2e8f0;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="wrapper">
+        <div class="container">
+          <div class="header">
+            <h1 class="logo">APEX <span>RESEARCH</span></h1>
+          </div>
+          <div class="body-content">
+            <div class="badge">
+              <span class="badge-dot"></span> Admin Notification
+            </div>
+            <h2 class="title">🎉 New Subscriber Joined!</h2>
+            <p class="description">
+              Hello Admin, we have some exciting news! A new user has subscribed to the <strong>Apex Weekly Digest</strong>. Our community is growing warmer and larger!
+            </p>
+            
+            <div class="detail-box">
+              <div class="detail-item"><strong>Subscriber Email:</strong> ${subscriberEmail}</div>
+              <div class="detail-item"><strong>Subscribed On:</strong> ${new Date().toLocaleString()}</div>
+            </div>
+
+            <p class="description" style="margin-top: 24px;">
+              Keep up the great work. Apex Research Terminal is helping more minds gain high-quality market insights!
+            </p>
+          </div>
+          <div class="footer">
+            <p>© ${year} Apex Research Terminal. Admin System.</p>
+          </div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  if (transporter) {
+    const mailOptions = {
+      from: `"Apex Admin" <${adminEmail}>`,
+      to: adminEmail,
+      subject: `🎉 New Subscriber Alert: ${subscriberEmail}`,
+      html: emailHtml,
+    };
+    await transporter.sendMail(mailOptions);
+    console.log(`[Email Service] Success: Admin notification email sent via SMTP to: ${adminEmail}`);
+  } else {
+    console.log(`\n======================================================`);
+    console.log(`[Email Service] SANDBOX MODE (No SMTP credentials configured)`);
+    console.log(`[Admin Recipient]: ${adminEmail}`);
+    console.log(`[Subject]: New Subscriber Alert: ${subscriberEmail}`);
+    console.log(`======================================================\n`);
+  }
+};
+

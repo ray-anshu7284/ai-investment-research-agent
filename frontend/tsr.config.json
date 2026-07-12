@@ -1,3 +1,4 @@
 {
-  "disableTypes": true
+  "disableTypes": true,
+  "generatedRouteTree": "src/routeTree.gen.js"
 }

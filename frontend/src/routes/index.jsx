@@ -6,13 +6,13 @@ import { Footer } from "@/components/investment/Footer";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Vortex Investment Research Terminal — Professional Financial Analysis" },
+      { title: "Apex Research Investment Terminal — Professional Financial Analysis" },
       {
         name: "description",
         content:
           "Institutional-grade platform for global investment research. Get financial ratios, news intelligence, risk scoring, and structured investment thesis generation.",
       },
-      { property: "og:title", content: "Vortex Investment Research Terminal" },
+      { property: "og:title", content: "Apex Research Investment Terminal" },
       {
         property: "og:description",
         content:

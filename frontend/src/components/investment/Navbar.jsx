@@ -82,12 +82,12 @@ export function Navbar() {
         {/* Logo & Brand */}
         <div className="flex items-center gap-3">
           <div className="relative flex h-9.5 w-9.5 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-card shadow-[0_2px_8px_oklch(0_0_0_/_0.04)]">
-            <img src="/logo.png" alt="Vortex Logo" className="h-5 w-5 object-contain" />
+            <img src="/logo.png" alt="Apex Research Logo" className="h-5 w-5 object-contain" />
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-50" />
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-extrabold tracking-wider text-foreground leading-none flex items-center gap-1">
-              VORTEX{" "}
+              APEX{" "}
               <span className="text-primary font-bold text-[10px] bg-primary/10 px-1.5 py-0.2 rounded font-mono">
                 RESEARCH
               </span>

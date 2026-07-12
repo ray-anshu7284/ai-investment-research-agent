@@ -18,7 +18,7 @@ export const Route = createFileRoute("/report")({
   validateSearch: (search) => reportSearchSchema.parse(search),
   head: () => ({
     meta: [
-      { title: "Vortex Investment Report — Analysis Results" },
+      { title: "Apex Research Investment Report — Analysis Results" },
       {
         name: "description",
         content: "Comprehensive company investment research and quantitative analysis report.",

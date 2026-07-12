@@ -78,10 +78,10 @@ export const Route = createRootRouteWithContext()({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Vortex Investment Research Terminal" },
+      { title: "Apex Research Investment Terminal" },
       { name: "description", content: "Institutional-grade platform for global investment research and quantitative analysis." },
-      { name: "author", content: "Vortex Research" },
-      { property: "og:title", content: "Vortex Investment Research Terminal" },
+      { name: "author", content: "Apex Research" },
+      { property: "og:title", content: "Apex Research Investment Terminal" },
       { property: "og:description", content: "Institutional-grade platform for global investment research and quantitative analysis." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

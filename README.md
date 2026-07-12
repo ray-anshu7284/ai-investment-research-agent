@@ -1,8 +1,8 @@
-# Vortex AI — AI Investment Research Terminal
+# Apex Research — AI Investment Terminal
 
-Vortex AI is a full-stack, professional-grade investment research platform. It acts as an automated financial analyst: users can enter any company name, and the application instantly conducts deep financial research, aggregates real-time market sentiment, performs competitor comparisons, and outputs a structured investment report with a clear **Buy, Hold, or Pass** verdict.
+Apex Research is a full-stack, professional-grade investment research platform. It acts as an automated financial analyst: users can enter any company name, and the application instantly conducts deep financial research, aggregates real-time market sentiment, performs competitor comparisons, and outputs a structured investment report with a clear **Buy, Hold, or Pass** verdict.
 
-![Vortex AI Terminal Mockup](./vortex_terminal_mockup.png)
+![Apex Research Terminal Banner](./apex_research_banner.png)
 
 ---
 
@@ -19,7 +19,7 @@ Vortex AI is a full-stack, professional-grade investment research platform. It a
 
 ## 🔍 Overview
 
-Vortex AI solves a common problem in financial research: the time-consuming process of scanning multiple financial databases, checking news sentiment, and drafting analysis reports. 
+Apex Research solves a common problem in financial research: the time-consuming process of scanning multiple financial databases, checking news sentiment, and drafting analysis reports. 
 
 By utilizing advanced Large Language Models (LLMs), live Web search crawlers, and strict schema validation, the application synthesizes Wall Street-grade research reports in less than 3 seconds. It provides:
 - **Financial Ratios & Trends:** Key metrics (PE, Operating Margin, ROE) and charts (12-month stock price and multi-year revenue/profits).
@@ -73,7 +73,7 @@ By utilizing advanced Large Language Models (LLMs), live Web search crawlers, an
    - Open `.env` and fill in your variables:
      ```env
      PORT=5000
-     MONGO_URI=mongodb://localhost:27017/vortex-ai
+     MONGO_URI=mongodb://localhost:27017/apex-research
      GROQ_API_KEY=your_groq_api_key_here
      TAVILY_API_KEY=your_tavily_api_key_here
 
@@ -109,7 +109,7 @@ By utilizing advanced Large Language Models (LLMs), live Web search crawlers, an
 ## ⚙️ How It Works (Architecture & Data Flow)
 
 ### High-Level Architecture
-Vortex AI utilizes a decoupled client-server architecture with a fast caching layer and strict data parsing.
+Apex Research utilizes a decoupled client-server architecture with a fast caching layer and strict data parsing.
 
 ```mermaid
 graph TD
