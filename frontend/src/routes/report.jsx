@@ -103,13 +103,14 @@ function ReportPage() {
   return (
     <div className="flex flex-col min-h-screen overflow-x-hidden w-full">
       <Toaster
-        theme="light"
         position="top-right"
         toastOptions={{
           style: {
-            background: "oklch(1 0 0)",
-            border: "1px solid oklch(0 0 0 / 0.08)",
-            color: "oklch(0.18 0.02 265)",
+            background: "#0D0E14",
+            border: "1px solid rgba(255,255,255,0.1)",
+            color: "#E8E8F0",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.78rem",
           },
         }}
       />

@@ -4,109 +4,88 @@ import { AlertTriangle, RotateCcw, Search } from "lucide-react";
 export function ErrorState({ error, company, onRetry, onReset }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
-      className="mx-auto max-w-2xl px-4 py-16 sm:px-6"
+      className="mx-auto max-w-xl px-4 py-16 sm:px-6"
     >
       <div
-        className="relative overflow-hidden rounded-3xl p-8 sm:p-10"
-        style={{
-          background: "oklch(0.115 0.012 260)",
-          border: "1px solid oklch(0.58 0.22 25 / 0.25)",
-          boxShadow: "0 24px 80px oklch(0 0 0 / 0.6), 0 0 60px oklch(0.58 0.22 25 / 0.08)",
-        }}
+        className="rounded-xl overflow-hidden"
+        style={{ border: "1px solid rgba(239,68,68,0.25)", background: "#050508" }}
       >
-        {/* Ambient error glow */}
+        {/* Terminal Header */}
         <div
-          className="pointer-events-none absolute -top-20 left-1/2 h-56 w-56 -translate-x-1/2 rounded-full opacity-30"
-          style={{
-            background: "radial-gradient(circle, oklch(0.58 0.22 25 / 0.5), transparent 70%)",
-            filter: "blur(40px)",
-          }}
-        />
-
-        <div className="relative flex flex-col items-center text-center">
-          {/* Error icon */}
-          <div
-            className="grid h-16 w-16 place-items-center rounded-2xl mb-6"
-            style={{
-              background: "oklch(0.58 0.22 25 / 0.1)",
-              border: "1px solid oklch(0.58 0.22 25 / 0.3)",
-              boxShadow: "0 0 24px oklch(0.58 0.22 25 / 0.15)",
-            }}
+          className="flex items-center gap-2 px-4 py-3"
+          style={{ background: "#0D0E14", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+        >
+          <span className="h-2.5 w-2.5 rounded-full" style={{ background: "#EF4444" }} />
+          <span className="h-2.5 w-2.5 rounded-full" style={{ background: "rgba(255,255,255,0.1)" }} />
+          <span className="h-2.5 w-2.5 rounded-full" style={{ background: "rgba(255,255,255,0.1)" }} />
+          <span
+            className="ml-3"
+            style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "#EF4444", letterSpacing: "0.1em" }}
           >
-            <AlertTriangle className="h-7 w-7" style={{ color: "oklch(0.65 0.22 25)" }} />
+            apex-research · ERROR · ANALYSIS FAILED
+          </span>
+        </div>
+
+        {/* Body */}
+        <div className="p-6">
+          <div className="space-y-1.5 mb-6">
+            <p className="terminal-line" style={{ color: "#EF4444" }}>
+              $ apex analyze {company ? `"${company}"` : ""}
+            </p>
+            <p className="terminal-line" style={{ color: "#3D4060" }}>
+              Initializing analysis engine...
+            </p>
+            <p className="terminal-line" style={{ color: "#EF4444" }}>
+              ✗ FATAL: {error.message}
+            </p>
+            {(error.status || error.code) && (
+              <p className="terminal-line" style={{ color: "#3D4060" }}>
+                {error.status && `HTTP_STATUS=${error.status}`}
+                {error.code && ` · CODE=${error.code}`}
+              </p>
+            )}
+            <p className="terminal-line" style={{ color: "#3D4060" }}>
+              Process exited with code 1
+            </p>
           </div>
 
-          <h3 className="text-xl font-bold sm:text-2xl mb-2" style={{ color: "oklch(0.92 0.01 255)" }}>
-            Analysis Couldn't Complete
-          </h3>
-          <p className="max-w-md text-sm leading-relaxed mb-4" style={{ color: "oklch(0.52 0.02 255)" }}>
-            {error.message}
-          </p>
-
-          {/* Error code badge */}
-          {(error.status || error.code) && (
-            <div
-              className="inline-flex items-center gap-2 rounded-full px-3 py-1 font-mono text-[11px] mb-6"
-              style={{
-                background: "oklch(0.58 0.22 25 / 0.08)",
-                border: "1px solid oklch(0.58 0.22 25 / 0.2)",
-                color: "oklch(0.65 0.22 25)",
-              }}
-            >
-              {error.status && <span>HTTP {error.status}</span>}
-              {error.status && error.code && <span style={{ color: "oklch(1 0 0 / 0.2)" }}>·</span>}
-              {error.code && <span>{error.code}</span>}
-            </div>
-          )}
-
-          {/* Actions */}
-          <div className="flex flex-wrap items-center justify-center gap-3">
+          <div className="flex flex-wrap gap-2.5">
             {error.retryable && (
               <button
                 onClick={onRetry}
-                className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold cursor-pointer transition-all hover:opacity-90"
                 style={{
-                  background: "linear-gradient(135deg, oklch(0.65 0.25 255), oklch(0.60 0.22 280))",
-                  boxShadow: "0 4px 20px oklch(0.65 0.25 255 / 0.35)",
+                  background: "linear-gradient(135deg, #10B981, #059669)",
+                  color: "#050508",
+                  boxShadow: "0 4px 16px rgba(16,185,129,0.3)",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.72rem",
+                  letterSpacing: "0.06em",
                 }}
               >
-                <RotateCcw className="h-4 w-4" />
-                Retry Analysis
+                <RotateCcw className="h-3.5 w-3.5" /> RETRY
               </button>
             )}
             <button
               onClick={onReset}
-              className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+              className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold cursor-pointer transition-all"
               style={{
-                background: "oklch(1 0 0 / 0.04)",
-                border: "1px solid oklch(1 0 0 / 0.09)",
-                color: "oklch(0.55 0.02 255)",
+                background: "rgba(255,255,255,0.04)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                color: "#5A5B72",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.72rem",
+                letterSpacing: "0.06em",
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "oklch(0.65 0.25 255 / 0.3)";
-                e.currentTarget.style.color = "oklch(0.72 0.01 255)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.09)";
-                e.currentTarget.style.color = "oklch(0.55 0.02 255)";
-              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = "#9394A8"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = "#5A5B72"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
             >
-              <Search className="h-4 w-4" />
-              Try Different Company
+              <Search className="h-3.5 w-3.5" /> NEW SEARCH
             </button>
           </div>
-
-          {company && (
-            <p className="mt-6 text-xs" style={{ color: "oklch(0.35 0.01 255)" }}>
-              Failed while analyzing{" "}
-              <span className="font-semibold" style={{ color: "oklch(0.52 0.02 255)" }}>
-                {company}
-              </span>
-            </p>
-          )}
         </div>
       </div>
     </motion.div>

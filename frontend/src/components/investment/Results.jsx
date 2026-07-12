@@ -1,19 +1,7 @@
 import { motion } from "framer-motion";
 import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Line,
-  LineChart,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
+  Area, AreaChart, Bar, BarChart, CartesianGrid, Cell,
+  Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import React from "react";
 import ReactMarkdown from "react-markdown";
@@ -21,43 +9,36 @@ import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
-  Activity,
-  AlertTriangle,
-  ArrowUpRight,
-  Bookmark,
-  Brain,
-  Building2,
-  Check,
-  CheckCircle2,
-  ChevronDown,
-  Copy,
-  Cpu,
-  Download,
-  ExternalLink,
-  FileText,
-  Globe,
-  Info,
-  Lightbulb,
-  MinusCircle,
-  Newspaper,
-  Radar,
-  RotateCcw,
-  Share2,
-  Shield,
-  TrendingDown,
-  TrendingUp,
-  Users,
-  XCircle,
-  Zap,
+  Activity, AlertTriangle, ArrowUpRight, Bookmark, Brain, Building2,
+  Check, CheckCircle2, ChevronDown, Copy, Cpu, Download, ExternalLink,
+  FileText, Globe, Info, Lightbulb, MinusCircle, Newspaper, Radar, RotateCcw,
+  Share2, Shield, TrendingDown, TrendingUp, Users, XCircle, Zap,
 } from "lucide-react";
 
+const S = { color: "#9394A8" };
 const fade = {
-  initial: { opacity: 0, y: 20 },
+  initial: { opacity: 0, y: 16 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-60px" },
-  transition: { duration: 0.5 },
+  viewport: { once: true, margin: "-40px" },
+  transition: { duration: 0.45 },
 };
 
+const CHART_TOOLTIP = {
+  contentStyle: {
+    background: "#0D0E14",
+    border: "1px solid rgba(255,255,255,0.1)",
+    borderRadius: 8,
+    fontSize: 11,
+    color: "#E8E8F0",
+  },
+  itemStyle: { color: "#E8E8F0" },
+  labelStyle: { color: "#5A5B72" },
+  cursor: { stroke: "rgba(16,185,129,0.3)" },
+};
+
+// ==============================
+// SUB-NAV
+// ==============================
 function ReportSubNavbar({ activeTab, setActiveTab }) {
   const sections = [
     { id: "overview", label: "Overview" },
@@ -69,32 +50,30 @@ function ReportSubNavbar({ activeTab, setActiveTab }) {
     { id: "thesis", label: "Thesis" },
     { id: "risk", label: "Risk" },
   ];
-
   return (
-    <div className="sticky top-[83px] z-45 -mx-4 px-4 bg-background/80 border-b border-b-border/30 backdrop-blur-md py-2.5 sm:-mx-6 sm:px-6 md:-mx-8 md:px-8">
-      <div className="mx-auto max-w-7xl flex items-center gap-1.5 overflow-x-auto scrollbar-thin pb-1.5 sm:pb-0 select-none">
-        {sections.map((sec) => {
-          const isActive = activeTab === sec.id;
-          return (
-            <button
-              key={sec.id}
-              onClick={() => setActiveTab(sec.id)}
-              suppressHydrationWarning={true}
-              className={`shrink-0 rounded-full px-4 py-1 text-xs font-semibold tracking-tight transition-all cursor-pointer ${
-                isActive
-                  ? "bg-primary text-white shadow-sm shadow-primary/20 scale-[1.02]"
-                  : "text-muted-foreground hover:text-foreground hover:bg-surface/50"
-              }`}
-            >
-              {sec.label}
-            </button>
-          );
-        })}
+    <div
+      className="report-subnav sticky z-45 -mx-4 px-4 sm:-mx-6 sm:px-6 md:-mx-8 md:px-8"
+      style={{ top: 74 }}
+    >
+      <div className="mx-auto max-w-7xl flex items-center gap-1 overflow-x-auto scrollbar-thin py-2 select-none">
+        {sections.map((sec) => (
+          <button
+            key={sec.id}
+            onClick={() => setActiveTab(sec.id)}
+            suppressHydrationWarning
+            className={`subnav-tab ${activeTab === sec.id ? "active" : ""}`}
+          >
+            {sec.label}
+          </button>
+        ))}
       </div>
     </div>
   );
 }
 
+// ==============================
+// MAIN RESULTS COMPONENT
+// ==============================
 export function Results({ report, onReset }) {
   const [activeTab, setActiveTab] = React.useState("overview");
   const [isComingSoonOpen, setComingSoonOpen] = React.useState(false);
@@ -106,26 +85,23 @@ export function Results({ report, onReset }) {
   };
 
   React.useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: "instant",
-    });
+    window.scrollTo({ top: 0, behavior: "instant" });
   }, [activeTab]);
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6 px-4 pb-8 sm:px-6">
+    <div className="mx-auto max-w-7xl space-y-5 px-4 pb-10 sm:px-6 md:px-8">
       <ReportSubNavbar activeTab={activeTab} setActiveTab={setActiveTab} />
       <ActionBar onReset={onReset} onActionClick={handleActionClick} />
 
       {activeTab === "overview" && (
-        <div className="space-y-6">
-          <PremiumDecisionCard report={report} />
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div className="lg:col-span-2">
+        <div className="space-y-5">
+          <DecisionBanner report={report} />
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+            <div className="lg:col-span-2 space-y-5">
               <OverviewCard report={report} />
             </div>
-            <div className="space-y-6">
-              <SentimentDonut report={report} />
+            <div className="space-y-5">
+              <SentimentCard report={report} />
               <AnalystCard report={report} />
             </div>
           </div>
@@ -133,22 +109,22 @@ export function Results({ report, onReset }) {
       )}
 
       {activeTab === "workflow" && (
-        <div className="space-y-6">
-          <ResearchWorkflowTimeline report={report} />
-          <InvestmentReasoningCards report={report} />
+        <div className="space-y-5">
+          <WorkflowTimeline report={report} />
+          <ReasoningCard report={report} />
         </div>
       )}
 
       {activeTab === "financials" && (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="space-y-6 lg:col-span-2">
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+          <div className="space-y-5 lg:col-span-2">
             <FinancialMetrics report={report} />
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <RevenueChartCard report={report} />
-              <ProfitChartCard report={report} />
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+              <RevenueChart report={report} />
+              <ProfitChart report={report} />
             </div>
-            <StockChartCard report={report} />
-            <FinancialHealth report={report} />
+            <StockChart report={report} />
+            <HealthBars report={report} />
           </div>
           <div>
             <ScoreGauge report={report} />
@@ -157,69 +133,63 @@ export function Results({ report, onReset }) {
       )}
 
       {activeTab === "swot" && (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <SwotGrid report={report} />
           </div>
-          <div>
-            <ProsConsGrid report={report} />
-          </div>
+          <ProsConsPanel report={report} />
         </div>
       )}
 
       {activeTab === "news" && (
         <div className="max-w-4xl mx-auto w-full">
-          <NewsTimeline report={report} />
+          <NewsPanel report={report} />
         </div>
       )}
 
-      {activeTab === "competitors" && (
-        <div className="w-full">
-          <CompetitorTable report={report} />
-        </div>
-      )}
+      {activeTab === "competitors" && <CompetitorTable report={report} />}
 
       {activeTab === "thesis" && (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <ThesisCard report={report} />
           </div>
-          <div>
-            <SourcesGrid report={report} />
-          </div>
+          <SourcesPanel report={report} />
         </div>
       )}
 
       {activeTab === "risk" && (
         <div className="max-w-3xl mx-auto w-full">
-          <RiskCard report={report} />
+          <RiskPanel report={report} />
         </div>
       )}
 
-      {/* Coming Soon Modal Popup */}
+      {/* Coming Soon Modal */}
       <Dialog open={isComingSoonOpen} onOpenChange={setComingSoonOpen}>
-        <DialogContent className="max-w-[400px] border border-border/80 bg-background/95 p-6 shadow-2xl backdrop-blur-md rounded-2xl">
-          <DialogHeader className="flex flex-col items-center justify-center text-center pb-2">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary mb-4 ring-8 ring-primary/5">
-              <Cpu className="h-6 w-6" />
+        <DialogContent
+          className="max-w-[380px] p-6 rounded-xl"
+          style={{ background: "#0D0E14", border: "1px solid rgba(255,255,255,0.1)" }}
+        >
+          <DialogHeader className="flex flex-col items-center text-center pb-3">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl"
+              style={{ background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.25)" }}>
+              <Cpu className="h-5 w-5" style={{ color: "#10B981" }} />
             </div>
-            <DialogTitle className="text-lg font-bold tracking-tight text-foreground">
-              Module Synchronizing
+            <DialogTitle className="text-base font-bold" style={{ color: "#E8E8F0" }}>
+              Module Offline
             </DialogTitle>
           </DialogHeader>
-          
-          <div className="py-2 text-center">
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              The <span className="font-semibold text-foreground">{comingSoonFeature}</span> operation is currently offline for system upgrades. It will be available in the next terminal release.
-            </p>
-          </div>
-
-          <div className="flex justify-center pt-4">
+          <p className="text-sm text-center leading-relaxed" style={{ color: "#5A5B72" }}>
+            <span className="font-semibold" style={{ color: "#9394A8" }}>{comingSoonFeature}</span>{" "}
+            is under development and will be available in the next terminal release.
+          </p>
+          <div className="mt-5">
             <Button
               onClick={() => setComingSoonOpen(false)}
-              className="w-full bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 text-white cursor-pointer shadow-[0_0_15px_-3px_var(--color-primary)] font-semibold"
+              className="w-full font-bold text-sm cursor-pointer border-none"
+              style={{ background: "linear-gradient(135deg, #10B981, #059669)", color: "#050508" }}
             >
-              Acknowledge
+              Got It
             </Button>
           </div>
         </DialogContent>
@@ -227,647 +197,443 @@ export function Results({ report, onReset }) {
     </div>
   );
 }
+
+// ==============================
+// ACTION BAR
+// ==============================
 function ActionBar({ onReset, onActionClick }) {
-  const currentDate = new Date().toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric"
-  });
+  const date = new Date().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
   return (
     <motion.div {...fade} className="flex flex-wrap items-center justify-between gap-3">
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2.5">
         <button
           onClick={onReset}
-          className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface/60 px-4 py-2 text-sm text-foreground transition-all hover:border-primary/40 hover:bg-primary/10 cursor-pointer"
+          className="inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-semibold cursor-pointer transition-all"
+          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#5A5B72" }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = "#9394A8"; e.currentTarget.style.borderColor = "rgba(16,185,129,0.25)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = "#5A5B72"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
         >
-          <RotateCcw className="h-4 w-4" /> Analyze Another Company
+          <RotateCcw className="h-3.5 w-3.5" /> New Analysis
         </button>
-        <span className="inline-flex items-center gap-1.5 rounded-xl border border-border/40 bg-surface/30 px-3 py-2 text-xs text-muted-foreground select-none">
-          <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
-          Data current as of: {currentDate}
-        </span>
+        <div className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2"
+          style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.05)" }}>
+          <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: "#10B981" }} />
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "#3D4060", letterSpacing: "0.08em" }}>
+            DATA AS OF {date.toUpperCase()}
+          </span>
+        </div>
       </div>
       <div className="flex flex-wrap gap-2">
-        <ActionBtn
-          icon={<Download className="h-4 w-4" />}
-          label="PDF"
-          onClick={() => onActionClick("PDF Export")}
-        />
-        <ActionBtn
-          icon={<Copy className="h-4 w-4" />}
-          label="Copy"
-          onClick={() => onActionClick("Copy Report")}
-        />
-        <ActionBtn
-          icon={<Share2 className="h-4 w-4" />}
-          label="Share"
-          onClick={() => onActionClick("Share Report")}
-        />
-        <ActionBtn
-          icon={<Bookmark className="h-4 w-4" />}
-          label="Save"
-          onClick={() => onActionClick("Save Report")}
-        />
+        {[
+          { icon: <Download className="h-3.5 w-3.5" />, label: "PDF", action: "PDF Export" },
+          { icon: <Copy className="h-3.5 w-3.5" />, label: "Copy", action: "Copy Report" },
+          { icon: <Share2 className="h-3.5 w-3.5" />, label: "Share", action: "Share" },
+          { icon: <Bookmark className="h-3.5 w-3.5" />, label: "Save", action: "Save Report" },
+        ].map(({ icon, label, action }) => (
+          <button
+            key={label}
+            onClick={() => onActionClick(action)}
+            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs cursor-pointer transition-all"
+            style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", color: "#5A5B72" }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = "#10B981"; e.currentTarget.style.borderColor = "rgba(16,185,129,0.25)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = "#5A5B72"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; }}
+          >
+            {icon} {label}
+          </button>
+        ))}
       </div>
     </motion.div>
   );
 }
-function ActionBtn({ icon, label, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface/40 px-3 py-2 text-xs text-muted-foreground transition-all hover:border-primary/40 hover:bg-primary/10 hover:text-foreground"
-    >
-      {icon} {label}
-    </button>
-  );
-}
-function Card({ children, className = "" }) {
+
+// ==============================
+// BASE CARD
+// ==============================
+function Panel({ children, className = "", accentColor }) {
   return (
     <motion.div
       {...fade}
-      className={`glass-strong relative overflow-hidden rounded-2xl p-4 sm:p-6 shadow-[var(--shadow-elevated)] ${className}`}
+      className={`apex-card p-5 sm:p-6 ${className}`}
+      style={accentColor ? { borderLeft: `3px solid ${accentColor}` } : {}}
     >
       {children}
     </motion.div>
   );
 }
-function SectionTitle({ icon, title, subtitle }) {
+
+function PanelTitle({ icon, label, sub }) {
   return (
-    <div className="mb-5 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 sm:flex sm:flex-wrap sm:justify-between">
-      <div className="flex min-w-0 items-center gap-3">
-        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/20">
-          {icon}
-        </div>
-        <div className="min-w-0">
-          <h3 className="truncate text-base font-semibold">{title}</h3>
-          {subtitle && <p className="truncate text-xs text-muted-foreground">{subtitle}</p>}
-        </div>
+    <div className="flex items-center gap-3 mb-5">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+        style={{ background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.2)" }}>
+        <span style={{ color: "#10B981" }}>{icon}</span>
+      </div>
+      <div>
+        <div className="text-sm font-bold" style={{ color: "#E8E8F0" }}>{label}</div>
+        {sub && <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: "#3D4060", letterSpacing: "0.1em", textTransform: "uppercase" }}>{sub}</div>}
       </div>
     </div>
   );
 }
-function OverviewCard({ report }) {
-  const o = report.overview;
-  const rows = [
-    ["Sector", o.sector],
-    ["Industry", o.industry],
-    ["Market Cap", o.marketCap],
-    ["Headquarters", o.headquarters],
-    ["Founded", o.founded],
-    ["CEO", o.ceo],
-    ["Employees", o.employees],
-    ["Website", o.website],
-  ];
-  return (
-    <Card>
-      <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-4 sm:flex sm:flex-wrap sm:justify-between">
-        <div className="flex min-w-0 items-center gap-4">
-          <div className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-[image:var(--gradient-primary)] text-2xl font-bold text-white shadow-[var(--shadow-glow)]">
-            {o.logo}
-          </div>
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="truncate text-2xl font-bold tracking-tight">{o.name}</h2>
-              <span className="rounded-md bg-primary/15 px-2 py-0.5 font-mono text-xs text-primary ring-1 ring-primary/20">
-                {o.ticker}
-              </span>
-            </div>
-            <p className="mt-0.5 text-sm text-muted-foreground">
-              {o.sector} · {o.industry}
-            </p>
-          </div>
-        </div>
-        <a
-          href={
-            o.website
-              ? o.website.startsWith("http://") || o.website.startsWith("https://")
-                ? o.website
-                : `https://${o.website}`
-              : "#"
-          }
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-border bg-surface/40 px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground"
-        >
-          <Globe className="h-3.5 w-3.5" /> {o.website} <ExternalLink className="h-3 w-3" />
-        </a>
-      </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {rows.map(([k, v]) => (
-          <div key={k} className="rounded-xl border border-border/60 bg-surface/40 p-3">
-            <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{k}</div>
-            <div className="mt-1 truncate text-sm font-medium text-foreground">{v}</div>
-          </div>
-        ))}
-      </div>
-
-      <p className="mt-6 text-sm leading-relaxed text-muted-foreground">{o.summary}</p>
-    </Card>
-  );
-}
+// ==============================
+// DECISION BANNER
+// ==============================
 function getDecisionReason(report, verdict) {
   const thesis = report.thesis || "";
-  const paragraphs = thesis
-    .split("\n")
-    .map((p) => p.trim())
-    .filter((p) => p && !p.startsWith("#") && !p.startsWith("-") && !p.startsWith("*") && !p.startsWith(">"));
-
+  const paragraphs = thesis.split("\n").map(p => p.trim()).filter(p => p && !p.startsWith("#") && !p.startsWith("-") && !p.startsWith("*") && !p.startsWith(">"));
   if (paragraphs.length > 0) {
-    const text = paragraphs[0];
-    const sentences = text.match(/[^.!?]+[.!?]+(\s|$)/g);
-    if (sentences && sentences.length > 0) {
-      return sentences.slice(0, 2).join("").trim();
-    }
-    return text;
+    const sentences = paragraphs[0].match(/[^.!?]+[.!?]+(\s|$)/g);
+    if (sentences && sentences.length > 0) return sentences.slice(0, 2).join("").trim();
+    return paragraphs[0];
   }
-
-  if (verdict === "INVEST") {
-    return report.pros && report.pros.length > 0
-      ? `Strong investment potential supported by key positive factors: ${report.pros[0]}.`
-      : "Positive financial indicators and a robust competitive position justify an investment stance.";
-  } else {
-    return report.cons && report.cons.length > 0
-      ? `Advising caution due to primary risk concerns: ${report.cons[0]}.`
-      : "Lower composite metrics and elevated valuation concerns suggest passing at the current price.";
-  }
+  return verdict === "INVEST"
+    ? "Strong investment potential supported by positive financial indicators and robust competitive positioning."
+    : "Caution advised due to elevated risk concerns and lower composite financial metrics.";
 }
 
-function PremiumDecisionCard({ report }) {
+function DecisionBanner({ report }) {
   const { verdict, confidence, score } = report.decision;
-  
-  // BUY -> INVEST, HOLD/SELL -> PASS
   const isInvest = verdict === "BUY";
-  const mappedDecision = isInvest ? "INVEST" : "PASS";
-
+  const decision = isInvest ? "INVEST" : "PASS";
   const riskScore = report.risk?.score || 50;
-  let riskLevel = "Medium";
-  let riskColor = "text-warning bg-warning/10 ring-warning/30";
-  if (riskScore <= 35) {
-    riskLevel = "Low";
-    riskColor = "text-success bg-success/10 ring-success/30";
-  } else if (riskScore > 65) {
-    riskLevel = "High";
-    riskColor = "text-destructive bg-destructive/10 ring-destructive/30";
-  }
+  const riskLevel = riskScore <= 35 ? "LOW" : riskScore > 65 ? "HIGH" : "MED";
+  const shortReason = getDecisionReason(report, decision);
 
-  const shortReason = getDecisionReason(report, mappedDecision);
-
-  const styles = {
-    INVEST: {
-      bg: "from-success/20 via-success/5 to-transparent",
-      ring: "ring-success/30",
-      text: "text-success",
-      badgeBg: "bg-success/10",
-      icon: <CheckCircle2 className="h-6 w-6" />,
-      glow: "shadow-[0_0_20px_rgba(34,197,94,0.15)]",
-    },
-    PASS: {
-      bg: "from-destructive/20 via-destructive/5 to-transparent",
-      ring: "ring-destructive/30",
-      text: "text-destructive",
-      badgeBg: "bg-destructive/10",
-      icon: <XCircle className="h-6 w-6" />,
-      glow: "shadow-[0_0_20px_rgba(239,68,68,0.15)]",
-    },
-  }[mappedDecision];
-
-  return (
-    <Card className={`bg-gradient-to-r ${styles.bg} ring-1 ${styles.ring} ${styles.glow}`}>
-      <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-        
-        {/* Left Side: Decision & Short Reason */}
-        <div className="flex-grow space-y-3">
-          <div className="flex items-center gap-3">
-            <div className={`grid h-10 w-10 place-items-center rounded-xl bg-background/80 ${styles.text} shadow-md`}>
-              {styles.icon}
-            </div>
-            <div>
-              <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Investment Decision</div>
-              <div className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide ${styles.badgeBg} ${styles.text} ring-1 ${styles.ring}`}>
-                {mappedDecision}
-              </div>
-            </div>
-          </div>
-          
-          <div className="space-y-1">
-            <p className="text-sm leading-relaxed text-foreground/90 font-medium font-serif italic">
-              "{shortReason}"
-            </p>
-          </div>
-        </div>
-
-        {/* Divider line for larger screens */}
-        <div className="hidden h-16 w-px bg-border/40 md:block" />
-
-        {/* Right Side: Key Decision Stats */}
-        <div className="grid grid-cols-3 gap-2 shrink-0 sm:gap-6 md:w-[320px]">
-          {/* Confidence */}
-          <div className="rounded-xl border border-border/60 bg-surface/30 p-3 text-center">
-            <div className="text-[9px] uppercase tracking-widest text-muted-foreground">Confidence</div>
-            <div className="mt-1 text-xl font-extrabold text-foreground">{confidence}%</div>
-            <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-white/5">
-              <div 
-                className="h-full rounded-full bg-primary" 
-                style={{ width: `${confidence}%` }} 
-              />
-            </div>
-          </div>
-
-          {/* Investment Score */}
-          <div className="rounded-xl border border-border/60 bg-surface/30 p-3 text-center">
-            <div className="text-[9px] uppercase tracking-widest text-muted-foreground">Score</div>
-            <div className="mt-1 text-xl font-extrabold text-gradient">{score}</div>
-            <div className="mt-1 text-[9px] text-muted-foreground">out of 100</div>
-          </div>
-
-          {/* Risk Profile */}
-          <div className="rounded-xl border border-border/60 bg-surface/30 p-3 text-center">
-            <div className="text-[9px] uppercase tracking-widest text-muted-foreground">Risk Level</div>
-            <div className={`mt-1 inline-block rounded-md px-1.5 py-0.5 text-xs font-bold uppercase tracking-wider ring-1 ${riskColor}`}>
-              {riskLevel}
-            </div>
-            <div className="mt-1 text-[9px] text-muted-foreground">score: {riskScore}</div>
-          </div>
-        </div>
-
-      </div>
-    </Card>
-  );
-}
-
-function TimelineStep({ num, icon, title, description, statusLabel, delay }) {
-  const [status, setStatus] = React.useState("loading");
-
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      setStatus("completed");
-    }, delay);
-    return () => clearTimeout(timer);
-  }, [delay]);
+  const color = isInvest ? "#10B981" : "#EF4444";
+  const bg = isInvest
+    ? "linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.04) 100%)"
+    : "linear-gradient(135deg, rgba(239,68,68,0.1) 0%, rgba(185,28,28,0.04) 100%)";
+  const border = isInvest ? "rgba(16,185,129,0.25)" : "rgba(239,68,68,0.25)";
+  const leftBorder = isInvest ? "#10B981" : "#EF4444";
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: delay / 1500 }}
-      className="relative flex items-start gap-4 pb-6 last:pb-0"
+      {...fade}
+      className="rounded-xl overflow-hidden p-5 sm:p-6"
+      style={{ background: bg, border: `1px solid ${border}`, borderLeft: `4px solid ${leftBorder}` }}
     >
-      {/* Connecting Line */}
-      <div className="absolute left-4 top-8 bottom-0 w-px bg-border/40 last:hidden" />
-
-      {/* Step Icon / Status indicator */}
-      <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface border border-border/80">
-        {status === "loading" ? (
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
-            className="h-4 w-4 rounded-full border border-primary border-t-transparent"
-          />
-        ) : (
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            className="text-success"
-          >
-            <Check className="h-4 w-4" />
-          </motion.div>
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="flex-grow min-w-0 pt-0.5">
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-xs font-semibold text-primary/70">{num}</span>
-            <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
-              <span className="text-muted-foreground/80">{icon}</span>
-              <span>{title}</span>
+      <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+        {/* Left: Decision */}
+        <div className="space-y-3 flex-grow">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl"
+              style={{ background: `${color}15`, border: `1px solid ${color}30` }}>
+              {isInvest ? <CheckCircle2 className="h-5 w-5" style={{ color }} /> : <XCircle className="h-5 w-5" style={{ color }} />}
+            </div>
+            <div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: "#3D4060", letterSpacing: "0.15em", textTransform: "uppercase" }}>
+                AI Investment Decision
+              </div>
+              <div
+                className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-0.5 text-xs font-black tracking-widest mt-0.5"
+                style={{ background: `${color}15`, color, border: `1px solid ${color}30`, fontFamily: "var(--font-mono)" }}
+              >
+                {decision}
+              </div>
             </div>
           </div>
-          <span className={`self-start sm:self-auto text-[10px] font-bold uppercase tracking-wider ${status === "loading" ? "text-primary animate-pulse" : "text-success bg-success/10 px-2 py-0.5 rounded ring-1 ring-success/20"}`}>
-            {status === "loading" ? "Analyzing..." : statusLabel}
-          </span>
+          <p className="text-sm leading-relaxed max-w-lg" style={{ color: "#9394A8", fontStyle: "italic" }}>
+            "{shortReason}"
+          </p>
         </div>
-        <div className="mt-1 text-xs text-muted-foreground/95 leading-relaxed">
-          {description}
+
+        {/* Divider */}
+        <div className="hidden h-16 w-px md:block" style={{ background: "rgba(255,255,255,0.07)" }} />
+
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-3 shrink-0 md:w-[300px]">
+          {[
+            { label: "Confidence", value: `${confidence}%`, bar: confidence },
+            { label: "Score", value: score, sub: "/ 100" },
+            { label: "Risk", value: riskLevel, badge: true, riskScore },
+          ].map(({ label, value, bar, sub, badge, riskScore: rs }) => (
+            <div key={label} className="text-center rounded-lg p-3"
+              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.58rem", color: "#3D4060", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                {label}
+              </div>
+              <div className="mt-1.5 text-lg font-black" style={{ color: "#E8E8F0" }}>{value}</div>
+              {sub && <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.58rem", color: "#3D4060" }}>{sub}</div>}
+              {bar !== undefined && (
+                <div className="mt-1.5 h-0.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.05)" }}>
+                  <div className="h-full rounded-full" style={{ width: `${bar}%`, background: "#10B981" }} />
+                </div>
+              )}
+              {badge && (
+                <div className="mt-1"
+                  style={{
+                    fontFamily: "var(--font-mono)", fontSize: "0.58rem", fontWeight: 700,
+                    color: rs <= 35 ? "#10B981" : rs > 65 ? "#EF4444" : "#F59E0B",
+                  }}
+                >
+                  {rs}/100
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </motion.div>
   );
 }
 
-function ResearchWorkflowTimeline({ report }) {
+// ==============================
+// OVERVIEW CARD
+// ==============================
+function OverviewCard({ report }) {
+  const o = report.overview;
+  const rows = [
+    ["Sector", o.sector], ["Industry", o.industry], ["Market Cap", o.marketCap],
+    ["Headquarters", o.headquarters], ["Founded", o.founded], ["CEO", o.ceo],
+    ["Employees", o.employees], ["Website", o.website],
+  ];
+  return (
+    <Panel>
+      {/* Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-5">
+        <div className="flex items-center gap-4">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-2xl font-black"
+            style={{ background: "linear-gradient(135deg, #10B981, #059669)", color: "#050508" }}>
+            {o.logo || o.name?.[0]}
+          </div>
+          <div>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <h2 className="text-xl font-black" style={{ color: "#E8E8F0" }}>{o.name}</h2>
+              <span className="cmd-badge" style={{ background: "rgba(16,185,129,0.08)", color: "#10B981", border: "1px solid rgba(16,185,129,0.2)" }}>
+                {o.ticker}
+              </span>
+            </div>
+            <p style={{ fontSize: "0.78rem", color: "#5A5B72", marginTop: "0.15rem" }}>
+              {o.sector} · {o.industry}
+            </p>
+          </div>
+        </div>
+        {o.website && (
+          <a
+            href={o.website.startsWith("http") ? o.website : `https://${o.website}`}
+            target="_blank" rel="noopener noreferrer"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs transition-all"
+            style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", color: "#5A5B72" }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = "#10B981"; e.currentTarget.style.borderColor = "rgba(16,185,129,0.25)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = "#5A5B72"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; }}
+          >
+            <Globe className="h-3.5 w-3.5" /> {o.website} <ExternalLink className="h-3 w-3" />
+          </a>
+        )}
+      </div>
+
+      {/* Data rows */}
+      <div className="rounded-lg overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.06)" }}>
+        {rows.map(([k, v], idx) => (
+          <div key={k} className="cmd-row px-4" style={{ background: idx % 2 === 0 ? "transparent" : "rgba(255,255,255,0.01)" }}>
+            <span className="cmd-label">{k}</span>
+            <span className="cmd-value text-right">{v || "N/A"}</span>
+          </div>
+        ))}
+      </div>
+
+      {o.summary && (
+        <p className="mt-4 text-sm leading-relaxed" style={{ color: "#5A5B72" }}>{o.summary}</p>
+      )}
+    </Panel>
+  );
+}
+
+// ==============================
+// SENTIMENT CARD
+// ==============================
+function SentimentCard({ report }) {
+  const { positive, neutral, negative } = report.sentiment;
+  const data = [
+    { name: "Positive", value: positive, color: "#10B981" },
+    { name: "Neutral", value: neutral, color: "#F59E0B" },
+    { name: "Negative", value: negative, color: "#EF4444" },
+  ];
+  return (
+    <Panel>
+      <PanelTitle icon={<Info className="h-4 w-4" />} label="Market Sentiment" sub="AI Scored" />
+      <div className="h-44">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie data={data} cx="50%" cy="50%" innerRadius={40} outerRadius={62} paddingAngle={3} dataKey="value" stroke="none">
+              {data.map((d) => <Cell key={d.name} fill={d.color} />)}
+            </Pie>
+            <Tooltip {...CHART_TOOLTIP} />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        {data.map((d) => (
+          <div key={d.name} className="text-center rounded-lg p-2" style={{ background: `${d.color}0D`, border: `1px solid ${d.color}25` }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.58rem", color: d.color, letterSpacing: "0.1em", textTransform: "uppercase" }}>{d.name}</div>
+            <div className="text-sm font-black mt-0.5" style={{ color: "#E8E8F0" }}>{d.value}%</div>
+          </div>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+// ==============================
+// ANALYST CARD
+// ==============================
+function AnalystCard({ report }) {
+  const a = report.analyst;
+  const buyVal = Number(a.buy) || 0;
+  const holdVal = Number(a.hold) || 0;
+  const sellVal = Number(a.sell) || 0;
+  let consensus = "Neutral";
+  if (a.consensus) {
+    const c = a.consensus.toLowerCase();
+    if (c.includes("buy") || c.includes("positive") || c.includes("outperform")) consensus = "Positive";
+    else if (c.includes("sell") || c.includes("negative") || c.includes("underperform")) consensus = "Negative";
+  } else {
+    if (buyVal > holdVal && buyVal > sellVal) consensus = "Positive";
+    else if (sellVal > buyVal && sellVal > holdVal) consensus = "Negative";
+  }
+  const cColor = consensus === "Positive" ? "#10B981" : consensus === "Negative" ? "#EF4444" : "#F59E0B";
+
+  return (
+    <Panel>
+      <PanelTitle icon={<Users className="h-4 w-4" />} label="Analyst Ratings" sub="Wall Street Coverage" />
+      <div className="grid grid-cols-3 gap-2 mb-4">
+        {[["Positive", a.buy, "#10B981"], ["Neutral", a.hold, "#F59E0B"], ["Negative", a.sell, "#EF4444"]].map(([l, v, c]) => (
+          <div key={l} className="text-center rounded-lg p-3" style={{ background: `${c}0D`, border: `1px solid ${c}20` }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.58rem", color: c, letterSpacing: "0.1em", textTransform: "uppercase" }}>{l}</div>
+            <div className="text-2xl font-black mt-1" style={{ color: "#E8E8F0" }}>{v}</div>
+          </div>
+        ))}
+      </div>
+      <div className="rounded-lg p-3" style={{ background: `${cColor}0A`, border: `1px solid ${cColor}20` }}>
+        <div className="flex items-center justify-between">
+          <div>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.58rem", color: "#3D4060", letterSpacing: "0.1em", textTransform: "uppercase" }}>Consensus</div>
+            <div className="text-base font-black mt-0.5" style={{ color: cColor }}>{consensus}</div>
+          </div>
+          <div className="text-right">
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.58rem", color: "#3D4060", letterSpacing: "0.1em", textTransform: "uppercase" }}>12M Target</div>
+            <div className="text-sm font-bold mt-0.5" style={{ color: "#E8E8F0" }}>{a.priceTarget}</div>
+          </div>
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
+// ==============================
+// WORKFLOW TIMELINE
+// ==============================
+function WorkflowTimeline({ report }) {
   const { verdict } = report.decision;
   const isInvest = verdict === "BUY";
-  const mappedDecision = isInvest ? "INVEST" : "PASS";
-
-  const peerCount = Math.max(0, (report.competitors?.length || 1) - 1);
-  const positiveSentiment = report.sentiment?.positive || 50;
+  const decision = isInvest ? "INVEST" : "PASS";
   const riskScore = report.risk?.score || 50;
-  const riskFactorsCount = report.risk?.factors?.length || 0;
-  const strengthsCount = report.swot?.strengths?.length || 0;
-  const weaknessesCount = report.swot?.weaknesses?.length || 0;
-
-  // Derive dynamic risk level
-  let riskLevel = "Medium";
-  if (riskScore <= 35) riskLevel = "Low";
-  else if (riskScore > 65) riskLevel = "High";
-
-  // Dynamic Financial Metrics labels
-  const m = report.metrics || [];
-  const peMetric = m.find(x => x.label.toUpperCase().includes("P/E") || x.label.toUpperCase().includes("PE"));
-  const roeMetric = m.find(x => x.label.toUpperCase().includes("ROE"));
-  const first = peMetric || m[0];
-  const second = roeMetric || m[1] || m[0];
-  const firstVal = first ? `${first.label}: ${first.value}` : "";
-  const secondVal = (second && second !== first) ? `${second.label}: ${second.value}` : "";
-  const metricsInsight = [firstVal, secondVal].filter(Boolean).join(" · ") || "Processed";
-
-  // Dynamic Revenue/Profit latest values
-  const revData = report.revenue || [];
-  const latestYear = revData[revData.length - 1];
-  const revenueInsight = latestYear ? `Rev: $${latestYear.revenue}B · Net: $${latestYear.profit}B` : "Analyzed";
-
-  // Dynamic Competitors list
-  const compList = (report.competitors || []).slice(1).map(c => c.name.split(" ")[0]).join(", ");
-  const compInsight = compList ? `Peers: ${compList}` : "Evaluated";
-
-  // Dynamic Thesis Synopsis (first two sentences)
-  const shortReason = getDecisionReason(report, mappedDecision);
-
+  const riskLevel = riskScore <= 35 ? "Low" : riskScore > 65 ? "High" : "Medium";
   const steps = [
-    {
-      num: "01",
-      icon: <Building2 className="h-4 w-4" />,
-      title: "Company Identification",
-      description: `Identified stock ticker ${report.overview?.ticker || "N/A"} for ${report.overview?.name || "the company"} (founded ${report.overview?.founded || "N/A"}).`,
-      statusLabel: `${report.overview?.ticker || "N/A"} · ${report.overview?.name ? report.overview.name.split(" ")[0] : "N/A"}`,
-    },
-    {
-      num: "02",
-      icon: <FileText className="h-4 w-4" />,
-      title: "Business Overview Analysis",
-      description: `Analyzed company sector (${report.overview?.sector || "N/A"}) and specific industry (${report.overview?.industry || "N/A"}).`,
-      statusLabel: report.overview?.sector ? `Sector: ${report.overview.sector.split(" ")[0]}` : "Overview",
-    },
-    {
-      num: "03",
-      icon: <Activity className="h-4 w-4" />,
-      title: "Financial Metrics Analysis",
-      description: `Processed ${report.metrics?.length || 0} core valuation, growth, and financial health indicators.`,
-      statusLabel: metricsInsight,
-    },
-    {
-      num: "04",
-      icon: <TrendingUp className="h-4 w-4" />,
-      title: "Revenue & Profit Analysis",
-      description: `Evaluated historical revenue and profit trends across ${report.revenue?.length || 0} fiscal years.`,
-      statusLabel: revenueInsight,
-    },
-    {
-      num: "05",
-      icon: <Users className="h-4 w-4" />,
-      title: "Competitor Analysis",
-      description: `Evaluated relative market capitalization and growth rates against ${peerCount} direct industry peers.`,
-      statusLabel: compInsight,
-    },
-    {
-      num: "06",
-      icon: <Newspaper className="h-4 w-4" />,
-      title: "Market & News Sentiment Analysis",
-      description: `Synthesized recent headlines; market sentiment is ${positiveSentiment}% positive.`,
-      statusLabel: `${positiveSentiment}% Positive`,
-    },
-    {
-      num: "07",
-      icon: <Shield className="h-4 w-4" />,
-      title: "Risk Assessment",
-      description: `Determined composite risk score of ${riskScore}/100 based on ${riskFactorsCount} key risk categories.`,
-      statusLabel: `${riskLevel} (${riskScore}/100)`,
-    },
-    {
-      num: "08",
-      icon: <Radar className="h-4 w-4" />,
-      title: "SWOT Analysis",
-      description: `Identified ${strengthsCount} strengths, ${weaknessesCount} weaknesses, and key market opportunities/threats.`,
-      statusLabel: `SWOT: ${strengthsCount}S / ${weaknessesCount}W`,
-    },
-    {
-      num: "09",
-      icon: <Zap className="h-4 w-4" />,
-      title: "Investment Verdict Analysis",
-      description: (
-        <div className="mt-1 space-y-1.5 font-medium">
-          <div className="flex flex-wrap gap-2 text-xs">
-            <span className="text-muted-foreground">Decision:</span>
-            <span className={isInvest ? "text-success font-semibold" : "text-destructive font-semibold"}>
-              {mappedDecision}
-            </span>
-            <span className="text-muted-foreground/30">|</span>
-            <span className="text-muted-foreground">Confidence:</span>
-            <span className="text-foreground font-semibold">{report.decision?.confidence || 0}%</span>
-          </div>
-          <p className="text-xs text-muted-foreground/80 leading-relaxed font-serif italic">
-            "{shortReason}"
-          </p>
-        </div>
-      ),
-      statusLabel: `Verdict: ${mappedDecision}`,
-    },
+    { num: "01", title: "Company Identified", detail: `${report.overview?.ticker || "N/A"} · ${report.overview?.name || "N/A"} · Founded ${report.overview?.founded || "N/A"}` },
+    { num: "02", title: "Business Overview", detail: `Sector: ${report.overview?.sector || "N/A"} · Industry: ${report.overview?.industry || "N/A"}` },
+    { num: "03", title: "Financial Metrics", detail: `${report.metrics?.length || 0} valuation & health indicators processed` },
+    { num: "04", title: "Revenue & Profit Trends", detail: `${report.revenue?.length || 0} fiscal years analyzed` },
+    { num: "05", title: "Competitor Benchmarking", detail: `${(report.competitors?.length || 1) - 1} peers evaluated` },
+    { num: "06", title: "News Sentiment", detail: `${report.sentiment?.positive || 0}% positive news signal` },
+    { num: "07", title: "Risk Assessment", detail: `Risk score: ${riskScore}/100 · Level: ${riskLevel}` },
+    { num: "08", title: "SWOT Analysis", detail: `${report.swot?.strengths?.length || 0}S / ${report.swot?.weaknesses?.length || 0}W / ${report.swot?.opportunities?.length || 0}O / ${report.swot?.threats?.length || 0}T` },
+    { num: "09", title: "Final Verdict", detail: `${decision} · Confidence: ${report.decision?.confidence || 0}% · Score: ${report.decision?.score || 0}/100` },
   ];
 
   return (
-    <Card className="p-6">
-      <SectionTitle
-        icon={<Radar className="h-4 w-4 text-primary" />}
-        title="Research Execution Timeline"
-        subtitle="Step-by-step processing details"
-      />
-      <div className="mt-6 flex flex-col pl-2 pr-2">
+    <Panel>
+      <PanelTitle icon={<Radar className="h-4 w-4" />} label="Research Execution Log" sub="Step-by-step analysis" />
+      <div className="space-y-0">
         {steps.map((step, idx) => (
-          <TimelineStep
-            key={step.num}
-            num={step.num}
-            icon={step.icon}
-            title={step.title}
-            description={step.description}
-            statusLabel={step.statusLabel}
-            delay={(idx + 1) * 450}
-          />
-        ))}
-      </div>
-    </Card>
-  );
-}
-
-function InvestmentReasoningCards({ report }) {
-  const { verdict } = report.decision;
-  const isInvest = verdict === "BUY";
-  const mappedDecision = isInvest ? "INVEST" : "PASS";
-
-  const bullets = [];
-  if (isInvest) {
-    if (report.pros) report.pros.forEach((p) => bullets.push(p));
-    if (report.swot?.strengths) {
-      report.swot.strengths.forEach((s) => {
-        if (!bullets.includes(s)) bullets.push(s);
-      });
-    }
-    if (report.sentiment?.positive > 60) {
-      bullets.push(`Strong market sentiment with ${report.sentiment.positive}% positive news indicators.`);
-    }
-    if (report.decision?.score >= 70) {
-      bullets.push(`High composite financial health score of ${report.decision.score}/100.`);
-    }
-  } else {
-    if (report.cons) report.cons.forEach((c) => bullets.push(c));
-    if (report.swot?.weaknesses) {
-      report.swot.weaknesses.forEach((w) => {
-        if (!bullets.includes(w)) bullets.push(w);
-      });
-    }
-    if (report.swot?.threats) {
-      report.swot.threats.forEach((t) => {
-        if (!bullets.includes(t)) bullets.push(t);
-      });
-    }
-    if (report.risk?.score > 50) {
-      bullets.push(`Elevated composite risk profile scored at ${report.risk.score}/100.`);
-    }
-  }
-
-  const displayBullets = bullets.slice(0, 6);
-
-  const styles = {
-    INVEST: {
-      bg: "from-success/20 via-success/5 to-transparent",
-      border: "border-success/30",
-      text: "text-success",
-      icon: <Check className="h-5 w-5 text-success" />,
-      title: "Why INVEST?",
-      summary: "The AI recommends INVEST because the company demonstrates strong financial performance, positive market sentiment, and healthy long-term growth potential.",
-      glow: "shadow-[0_0_20px_rgba(34,197,94,0.12)]",
-    },
-    PASS: {
-      bg: "from-destructive/20 via-destructive/5 to-transparent",
-      border: "border-destructive/30",
-      text: "text-destructive",
-      icon: <XCircle className="h-5 w-5 text-destructive" />,
-      title: "Why PASS?",
-      summary: "The AI recommends PASS because the company shows elevated risk, weaker financial performance, or negative market indicators.",
-      glow: "shadow-[0_0_20px_rgba(239,68,68,0.12)]",
-    },
-  }[mappedDecision];
-
-  return (
-    <Card className={`bg-gradient-to-br ${styles.bg} ${styles.border} ${styles.glow}`}>
-      <div className="flex items-center gap-2.5 mb-3">
-        <div className={`flex h-8 w-8 items-center justify-center rounded-lg bg-background/60 ring-1 ${isInvest ? "ring-success/20" : "ring-destructive/20"}`}>
-          {styles.icon}
-        </div>
-        <h3 className={`text-base font-bold tracking-tight ${styles.text}`}>
-          {styles.title}
-        </h3>
-      </div>
-
-      <p className="text-sm text-foreground/80 mb-4 font-medium leading-relaxed">
-        {styles.summary}
-      </p>
-
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {displayBullets.map((bullet, idx) => (
           <motion.div
-            key={idx}
-            initial={{ opacity: 0, x: -10 }}
+            key={step.num}
+            initial={{ opacity: 0, x: -12 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: idx * 0.05 }}
-            className="flex items-start gap-3 rounded-xl border border-border/40 bg-surface/35 p-3 shadow-sm hover:bg-surface/50 transition-colors"
+            transition={{ delay: idx * 0.06, duration: 0.35 }}
+            className="relative flex items-start gap-4 py-3"
+            style={{ borderBottom: idx < steps.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none" }}
           >
-            <div className="mt-0.5 shrink-0">
-              {isInvest ? (
-                <Check className="h-4 w-4 text-success" />
-              ) : (
-                <XCircle className="h-4 w-4 text-destructive" />
-              )}
+            {/* Connector */}
+            {idx < steps.length - 1 && (
+              <div className="absolute left-[17px] top-9 bottom-0 w-px" style={{ background: "rgba(255,255,255,0.04)" }} />
+            )}
+            {/* Step circle */}
+            <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+              style={{ background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.2)" }}>
+              <CheckCircle2 className="h-4 w-4" style={{ color: "#10B981" }} />
             </div>
-            <span className="text-xs text-foreground/90 font-medium leading-relaxed">
-              {bullet}
-            </span>
+            <div className="flex-grow min-w-0 pt-0.5">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: "#10B981", letterSpacing: "0.1em" }}>{step.num}</span>
+                <span className="text-sm font-semibold" style={{ color: "#C8C9D8" }}>{step.title}</span>
+              </div>
+              <p className="text-xs mt-0.5" style={{ color: "#3D4060" }}>{step.detail}</p>
+            </div>
           </motion.div>
         ))}
       </div>
-    </Card>
-  );
-}
-function ScoreGauge({ report }) {
-  const score = report.decision.score;
-  const R = 70,
-    C = 2 * Math.PI * R;
-  const offset = C - (score / 100) * C;
-  return (
-    <Card>
-      <SectionTitle
-        icon={<Activity className="h-4 w-4" />}
-        title="Investment Score"
-        subtitle="AI-weighted composite"
-      />
-      <div className="relative mx-auto grid h-52 w-52 place-items-center">
-        <svg className="absolute inset-0 -rotate-90" viewBox="0 0 160 160">
-          <defs>
-            <linearGradient id="scoreGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="oklch(0.62 0.20 275)" />
-              <stop offset="100%" stopColor="oklch(0.78 0.18 320)" />
-            </linearGradient>
-          </defs>
-          <circle cx="80" cy="80" r={R} fill="none" stroke="oklch(1 0 0 / 0.08)" strokeWidth="10" />
-          <motion.circle
-            cx="80"
-            cy="80"
-            r={R}
-            fill="none"
-            stroke="url(#scoreGrad)"
-            strokeWidth="10"
-            strokeLinecap="round"
-            strokeDasharray={C}
-            initial={{ strokeDashoffset: C }}
-            animate={{ strokeDashoffset: offset }}
-            transition={{ duration: 1.4, ease: "easeOut" }}
-          />
-        </svg>
-        <div className="text-center">
-          <div className="text-5xl font-bold text-gradient">{score}</div>
-          <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
-            out of 100
-          </div>
-        </div>
-      </div>
-      <div className="mt-4 grid grid-cols-2 gap-2 text-center text-[10px] uppercase tracking-widest">
-        <div className="rounded-lg bg-destructive/10 px-2 py-1.5 text-destructive">0-70 Pass</div>
-        <div className="rounded-lg bg-success/10 px-2 py-1.5 text-success">70-100 Invest</div>
-      </div>
-    </Card>
+    </Panel>
   );
 }
 
-function FinancialMetrics({ report }) {
-  const sanitizeVal = (val) => {
-    if (!val || val === "0" || val === "0.0" || val === "0%" || val === "0.0%" || val === "N/A" || val === "-") {
-      return "N/A";
-    }
-    return val;
-  };
+// ==============================
+// REASONING CARD
+// ==============================
+function ReasoningCard({ report }) {
+  const isInvest = report.decision.verdict === "BUY";
+  const decision = isInvest ? "INVEST" : "PASS";
+  const color = isInvest ? "#10B981" : "#EF4444";
+  const bullets = [];
+  if (isInvest) {
+    (report.pros || []).forEach(p => bullets.push(p));
+    (report.swot?.strengths || []).forEach(s => { if (!bullets.includes(s)) bullets.push(s); });
+  } else {
+    (report.cons || []).forEach(c => bullets.push(c));
+    (report.swot?.weaknesses || []).forEach(w => { if (!bullets.includes(w)) bullets.push(w); });
+  }
+
   return (
-    <Card>
-      <SectionTitle
-        icon={<Activity className="h-4 w-4" />}
-        title="Financial Metrics"
-        subtitle="Trailing twelve months"
+    <Panel accentColor={color}>
+      <PanelTitle
+        icon={isInvest ? <CheckCircle2 className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
+        label={`Why ${decision}?`}
+        sub="AI Reasoning"
       />
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+        {bullets.slice(0, 6).map((b, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.05 }}
+            className="flex items-start gap-2.5 rounded-lg p-3"
+            style={{ background: `${color}08`, border: `1px solid ${color}20` }}
+          >
+            {isInvest
+              ? <Check className="h-3.5 w-3.5 mt-0.5 shrink-0" style={{ color }} />
+              : <XCircle className="h-3.5 w-3.5 mt-0.5 shrink-0" style={{ color }} />
+            }
+            <span className="text-xs leading-relaxed" style={{ color: "#9394A8" }}>{b}</span>
+          </motion.div>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+// ==============================
+// FINANCIAL METRICS
+// ==============================
+function FinancialMetrics({ report }) {
+  const sanitize = (v) => (!v || v === "0" || v === "0.0" || v === "0%" || v === "N/A" || v === "-") ? "N/A" : v;
+  return (
+    <Panel>
+      <PanelTitle icon={<Activity className="h-4 w-4" />} label="Financial Metrics" sub="Trailing Twelve Months" />
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
         {report.metrics.map((m, i) => (
           <motion.div
             key={m.label}
@@ -875,142 +641,102 @@ function FinancialMetrics({ report }) {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.03 }}
-            className="group relative overflow-hidden rounded-xl border border-border/60 bg-surface/40 p-4 transition-all hover:border-primary/40 hover:bg-surface/60"
+            className="rounded-lg p-3.5 group cursor-default transition-all"
+            style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.06)" }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(16,185,129,0.25)"; e.currentTarget.style.background = "rgba(16,185,129,0.04)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; e.currentTarget.style.background = "rgba(255,255,255,0.025)"; }}
           >
-            <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
-              {m.label}
-            </div>
-            <div className="mt-2 text-xl font-bold tracking-tight">{sanitizeVal(m.value)}</div>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.58rem", color: "#3D4060", letterSpacing: "0.1em", textTransform: "uppercase" }}>{m.label}</div>
+            <div className="mt-2 text-lg font-black" style={{ color: "#E8E8F0" }}>{sanitize(m.value)}</div>
             {m.delta && (
-              <div
-                className={`mt-1 inline-flex items-center gap-1 text-xs ${m.positive ? "text-success" : "text-destructive"}`}
-              >
-                {m.positive ? (
-                  <TrendingUp className="h-3 w-3" />
-                ) : (
-                  <TrendingDown className="h-3 w-3" />
-                )}{" "}
+              <div className="mt-1 inline-flex items-center gap-1 text-xs" style={{ color: m.positive ? "#10B981" : "#EF4444" }}>
+                {m.positive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                 {m.delta}
               </div>
             )}
           </motion.div>
         ))}
       </div>
-    </Card>
+    </Panel>
   );
 }
-const chartTooltip = {
-  contentStyle: {
-    background: "oklch(0.18 0.035 265 / 0.95)",
-    border: "1px solid oklch(1 0 0 / 0.1)",
-    borderRadius: 12,
-    fontSize: 12,
-    color: "white",
-  },
-  itemStyle: { color: "white" },
-  labelStyle: { color: "white" },
-  cursor: { stroke: "oklch(0.62 0.20 275 / 0.4)" },
-};
-function RevenueChartCard({ report }) {
+
+// ==============================
+// CHARTS
+// ==============================
+function RevenueChart({ report }) {
   return (
-    <Card>
-      <SectionTitle
-        icon={<TrendingUp className="h-4 w-4" />}
-        title="Revenue Trend"
-        subtitle="Billions USD · 6Y"
-      />
-      <div className="h-64">
+    <Panel>
+      <PanelTitle icon={<TrendingUp className="h-4 w-4" />} label="Revenue Trend" sub="Billions USD · 6Y" />
+      <div className="h-56">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={report.revenue}>
             <defs>
-              <linearGradient id="rev" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="oklch(0.62 0.20 275)" stopOpacity={0.6} />
-                <stop offset="100%" stopColor="oklch(0.62 0.20 275)" stopOpacity={0} />
+              <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#10B981" stopOpacity={0.4} />
+                <stop offset="100%" stopColor="#10B981" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="oklch(1 0 0 / 0.05)" />
-            <XAxis dataKey="year" stroke="oklch(0.72 0.03 255)" fontSize={11} />
-            <YAxis stroke="oklch(0.72 0.03 255)" fontSize={11} />
-            <Tooltip {...chartTooltip} />
-            <Area
-              type="monotone"
-              dataKey="revenue"
-              stroke="oklch(0.72 0.22 285)"
-              strokeWidth={2.5}
-              fill="url(#rev)"
-              animationDuration={1200}
-            />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+            <XAxis dataKey="year" stroke="#3D4060" fontSize={10} fontFamily="var(--font-mono)" />
+            <YAxis stroke="#3D4060" fontSize={10} fontFamily="var(--font-mono)" />
+            <Tooltip {...CHART_TOOLTIP} />
+            <Area type="monotone" dataKey="revenue" stroke="#10B981" strokeWidth={2} fill="url(#revGrad)" animationDuration={1200} />
           </AreaChart>
         </ResponsiveContainer>
       </div>
-    </Card>
+    </Panel>
   );
 }
-function ProfitChartCard({ report }) {
+
+function ProfitChart({ report }) {
   return (
-    <Card>
-      <SectionTitle
-        icon={<TrendingUp className="h-4 w-4" />}
-        title="Profit Growth"
-        subtitle="Net income · Billions USD"
-      />
-      <div className="h-64">
+    <Panel>
+      <PanelTitle icon={<TrendingUp className="h-4 w-4" />} label="Profit Growth" sub="Net Income · Billions" />
+      <div className="h-56">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={report.revenue}>
-            <CartesianGrid strokeDasharray="3 3" stroke="oklch(1 0 0 / 0.05)" />
-            <XAxis dataKey="year" stroke="oklch(0.72 0.03 255)" fontSize={11} />
-            <YAxis stroke="oklch(0.72 0.03 255)" fontSize={11} />
-            <Tooltip {...chartTooltip} />
-            <Line
-              type="monotone"
-              dataKey="profit"
-              stroke="oklch(0.72 0.17 155)"
-              strokeWidth={2.5}
-              dot={{ fill: "oklch(0.72 0.17 155)", r: 4 }}
-              animationDuration={1200}
-            />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+            <XAxis dataKey="year" stroke="#3D4060" fontSize={10} fontFamily="var(--font-mono)" />
+            <YAxis stroke="#3D4060" fontSize={10} fontFamily="var(--font-mono)" />
+            <Tooltip {...CHART_TOOLTIP} />
+            <Line type="monotone" dataKey="profit" stroke="#34D399" strokeWidth={2} dot={{ fill: "#34D399", r: 3 }} animationDuration={1200} />
           </LineChart>
         </ResponsiveContainer>
       </div>
-    </Card>
+    </Panel>
   );
 }
-function StockChartCard({ report }) {
+
+function StockChart({ report }) {
   return (
-    <Card>
-      <SectionTitle
-        icon={<Activity className="h-4 w-4" />}
-        title="Stock Performance"
-        subtitle="12-month share price"
-      />
-      <div className="h-72">
+    <Panel>
+      <PanelTitle icon={<Activity className="h-4 w-4" />} label="Stock Performance" sub="12-Month Share Price" />
+      <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={report.stock}>
             <defs>
-              <linearGradient id="bar" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="oklch(0.72 0.22 285)" />
-                <stop offset="100%" stopColor="oklch(0.62 0.20 275)" />
+              <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#10B981" />
+                <stop offset="100%" stopColor="#059669" />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="oklch(1 0 0 / 0.05)" />
-            <XAxis dataKey="month" stroke="oklch(0.72 0.03 255)" fontSize={11} />
-            <YAxis stroke="oklch(0.72 0.03 255)" fontSize={11} />
-            <Tooltip {...chartTooltip} />
-            <Bar dataKey="price" fill="url(#bar)" radius={[6, 6, 0, 0]} animationDuration={1200} />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+            <XAxis dataKey="month" stroke="#3D4060" fontSize={10} fontFamily="var(--font-mono)" />
+            <YAxis stroke="#3D4060" fontSize={10} fontFamily="var(--font-mono)" />
+            <Tooltip {...CHART_TOOLTIP} />
+            <Bar dataKey="price" fill="url(#barGrad)" radius={[4, 4, 0, 0]} animationDuration={1200} />
           </BarChart>
         </ResponsiveContainer>
       </div>
-    </Card>
+    </Panel>
   );
 }
-function FinancialHealth({ report }) {
+
+function HealthBars({ report }) {
   return (
-    <Card>
-      <SectionTitle
-        icon={<Shield className="h-4 w-4" />}
-        title="Financial Health"
-        subtitle="Composite indicators"
-      />
+    <Panel>
+      <PanelTitle icon={<Shield className="h-4 w-4" />} label="Financial Health" sub="Composite Indicators" />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {report.health.map((h, i) => (
           <motion.div
@@ -1020,13 +746,14 @@ function FinancialHealth({ report }) {
             viewport={{ once: true }}
             transition={{ delay: i * 0.05 }}
           >
-            <div className="mb-1.5 flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">{h.label}</span>
-              <span className="text-sm font-semibold">{h.value}%</span>
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-xs" style={{ color: "#5A5B72" }}>{h.label}</span>
+              <span className="text-xs font-bold" style={{ color: "#E8E8F0" }}>{h.value}%</span>
             </div>
-            <div className="h-2 overflow-hidden rounded-full bg-white/5">
+            <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.05)" }}>
               <motion.div
-                className="h-full rounded-full bg-[image:var(--gradient-primary)]"
+                className="h-full rounded-full"
+                style={{ background: "linear-gradient(90deg, #10B981, #34D399)" }}
                 initial={{ width: 0 }}
                 whileInView={{ width: `${h.value}%` }}
                 viewport={{ once: true }}
@@ -1036,75 +763,79 @@ function FinancialHealth({ report }) {
           </motion.div>
         ))}
       </div>
-    </Card>
+    </Panel>
   );
 }
+
+// ==============================
+// SCORE GAUGE
+// ==============================
+function ScoreGauge({ report }) {
+  const score = report.decision.score;
+  const R = 68, C = 2 * Math.PI * R;
+  const offset = C - (score / 100) * C;
+  const color = score >= 70 ? "#10B981" : "#EF4444";
+  return (
+    <Panel>
+      <PanelTitle icon={<Activity className="h-4 w-4" />} label="Investment Score" sub="AI-weighted composite" />
+      <div className="relative mx-auto grid h-48 w-48 place-items-center">
+        <svg className="absolute inset-0 -rotate-90" viewBox="0 0 160 160">
+          <circle cx="80" cy="80" r={R} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="10" />
+          <motion.circle
+            cx="80" cy="80" r={R} fill="none" stroke={color} strokeWidth="10"
+            strokeLinecap="round" strokeDasharray={C}
+            initial={{ strokeDashoffset: C }}
+            animate={{ strokeDashoffset: offset }}
+            transition={{ duration: 1.4, ease: "easeOut" }}
+          />
+        </svg>
+        <div className="text-center">
+          <div className="text-4xl font-black" style={{ color }}>{score}</div>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.58rem", color: "#3D4060", letterSpacing: "0.1em" }}>OUT OF 100</div>
+        </div>
+      </div>
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        <div className="rounded-lg p-2.5 text-center" style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)" }}>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: "#EF4444", letterSpacing: "0.08em" }}>0–70 · PASS</div>
+        </div>
+        <div className="rounded-lg p-2.5 text-center" style={{ background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.2)" }}>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: "#10B981", letterSpacing: "0.08em" }}>70–100 · INVEST</div>
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
+// ==============================
+// SWOT GRID
+// ==============================
 function SwotGrid({ report }) {
-  const groups = [
-    {
-      key: "strengths",
-      label: "Strengths",
-      items: report.swot.strengths,
-      color: "success",
-      icon: <CheckCircle2 className="h-4 w-4" />,
-    },
-    {
-      key: "weaknesses",
-      label: "Weaknesses",
-      items: report.swot.weaknesses,
-      color: "destructive",
-      icon: <XCircle className="h-4 w-4" />,
-    },
-    {
-      key: "opportunities",
-      label: "Opportunities",
-      items: report.swot.opportunities,
-      color: "primary",
-      icon: <Lightbulb className="h-4 w-4" />,
-    },
-    {
-      key: "threats",
-      label: "Threats",
-      items: report.swot.threats,
-      color: "warning",
-      icon: <AlertTriangle className="h-4 w-4" />,
-    },
+  const quadrants = [
+    { key: "strengths", label: "S · Strengths", items: report.swot.strengths, color: "#10B981", cls: "swot-s" },
+    { key: "weaknesses", label: "W · Weaknesses", items: report.swot.weaknesses, color: "#EF4444", cls: "swot-w" },
+    { key: "opportunities", label: "O · Opportunities", items: report.swot.opportunities, color: "#3B82F6", cls: "swot-o" },
+    { key: "threats", label: "T · Threats", items: report.swot.threats, color: "#F59E0B", cls: "swot-t" },
   ];
   return (
-    <Card>
-      <SectionTitle
-        icon={<Radar className="h-4 w-4" />}
-        title="SWOT Analysis"
-        subtitle="AI-generated strategic view"
-      />
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {groups.map((g, gi) => (
+    <Panel>
+      <PanelTitle icon={<Radar className="h-4 w-4" />} label="SWOT Analysis" sub="Strategic Framework" />
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {quadrants.map((q, qi) => (
           <motion.div
-            key={g.key}
-            initial={{ opacity: 0, y: 15 }}
+            key={q.key}
+            initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: gi * 0.08 }}
-            className={`rounded-xl border p-4 bg-${g.color}/5 border-${g.color}/30`}
-            style={{
-              background: `color-mix(in oklab, var(--color-${g.color}) 8%, transparent)`,
-              borderColor: `color-mix(in oklab, var(--color-${g.color}) 30%, transparent)`,
-            }}
+            transition={{ delay: qi * 0.08 }}
+            className={`rounded-lg p-4 ${q.cls}`}
           >
-            <div
-              className="mb-3 flex items-center gap-2"
-              style={{ color: `var(--color-${g.color})` }}
-            >
-              {g.icon}
-              <span className="text-sm font-semibold uppercase tracking-widest">{g.label}</span>
+            <div className="mb-3" style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", fontWeight: 700, color: q.color, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+              {q.label}
             </div>
             <ul className="space-y-2">
-              {g.items.map((it) => (
-                <li key={it} className="flex gap-2 text-sm text-foreground/85">
-                  <span
-                    className="mt-2 h-1 w-1 shrink-0 rounded-full"
-                    style={{ background: `var(--color-${g.color})` }}
-                  />
+              {q.items.map((it) => (
+                <li key={it} className="flex items-start gap-2 text-xs leading-relaxed" style={{ color: "#9394A8" }}>
+                  <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full" style={{ background: q.color }} />
                   {it}
                 </li>
               ))}
@@ -1112,472 +843,260 @@ function SwotGrid({ report }) {
           </motion.div>
         ))}
       </div>
-    </Card>
+    </Panel>
   );
 }
-function RiskCard({ report }) {
-  const levelStyle = {
-    low: "text-success bg-success/10 ring-success/30",
-    medium: "text-warning bg-warning/10 ring-warning/30",
-    high: "text-destructive bg-destructive/10 ring-destructive/30",
-  };
+
+// ==============================
+// PROS/CONS PANEL
+// ==============================
+function ProsConsPanel({ report }) {
   return (
-    <Card>
-      <SectionTitle
-        icon={<Shield className="h-4 w-4" />}
-        title="Risk Analysis"
-        subtitle="Composite exposure"
-      />
-      <div className="rounded-xl border border-border/60 bg-surface/40 p-4">
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-muted-foreground">Risk Score</span>
-          <span className="font-semibold text-warning">{report.risk.score}/100</span>
-        </div>
-        <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/5">
-          <motion.div
-            className="h-full rounded-full bg-gradient-to-r from-success via-warning to-destructive"
-            initial={{ width: 0 }}
-            whileInView={{ width: `${report.risk.score}%` }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.2 }}
-          />
-        </div>
-      </div>
-      <div className="mt-4 grid grid-cols-2 gap-2">
-        {report.risk.factors.map((f) => (
-          <div
-            key={f.name}
-            className={`flex items-center justify-between rounded-lg px-3 py-2 text-xs ring-1 ${levelStyle[f.level]}`}
-          >
-            <span>{f.name}</span>
-            <span className="font-semibold uppercase tracking-widest">{f.level}</span>
-          </div>
-        ))}
-      </div>
-    </Card>
-  );
-}
-function NewsTimeline({ report }) {
-  const sentimentStyle = {
-    positive: "text-success bg-success/10 ring-success/30",
-    neutral: "text-muted-foreground bg-white/5 ring-border",
-    negative: "text-destructive bg-destructive/10 ring-destructive/30",
-  };
-  return (
-    <Card>
-      <SectionTitle
-        icon={<Newspaper className="h-4 w-4" />}
-        title="Latest News"
-        subtitle="Aggregated & AI-scored"
-      />
-      <div className="space-y-3">
-        {report.news.map((n, i) => (
-          <motion.article
-            key={n.headline}
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.05 }}
-            className="group rounded-xl border border-border/60 bg-surface/40 p-4 transition-all hover:border-primary/40"
-          >
-            <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
-              <span className="font-medium text-foreground/80">{n.source}</span>
-              <span>·</span>
-              <span>{n.time}</span>
-              <span
-                className={`ml-auto rounded-full px-2 py-0.5 uppercase tracking-widest ring-1 ${sentimentStyle[n.sentiment]}`}
+    <div className="space-y-4">
+      {[
+        { label: "Pros", items: report.pros, color: "#10B981", icon: <Check className="h-3.5 w-3.5" /> },
+        { label: "Cons", items: report.cons, color: "#EF4444", icon: <XCircle className="h-3.5 w-3.5" /> },
+      ].map(({ label, items, color, icon }) => (
+        <Panel key={label} accentColor={color}>
+          <PanelTitle icon={icon} label={label} />
+          <ul className="space-y-2">
+            {items.map((item, i) => (
+              <motion.li
+                key={item}
+                initial={{ opacity: 0, x: -8 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="flex items-start gap-2.5 rounded-lg p-2.5 text-xs leading-relaxed"
+                style={{ background: `${color}08`, border: `1px solid ${color}15`, color: "#9394A8" }}
               >
-                {n.sentiment}
-              </span>
-            </div>
-            <h4 className="mt-2 text-sm font-semibold leading-snug group-hover:text-primary">
-              {n.headline}
-            </h4>
-            <p className="mt-1 text-sm text-muted-foreground">{n.summary}</p>
-          </motion.article>
-        ))}
-      </div>
-    </Card>
-  );
-}
-function SentimentDonut({ report }) {
-  const data = [
-    { name: "Positive", value: report.sentiment.positive, color: "oklch(0.72 0.17 155)" },
-    { name: "Neutral", value: report.sentiment.neutral, color: "oklch(0.72 0.03 255)" },
-    { name: "Negative", value: report.sentiment.negative, color: "oklch(0.65 0.24 25)" },
-  ];
-  return (
-    <Card>
-      <SectionTitle icon={<Info className="h-4 w-4" />} title="Market Sentiment" />
-      <div className="h-52 w-full flex items-center justify-center">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              innerRadius={45}
-              outerRadius={70}
-              paddingAngle={4}
-              dataKey="value"
-              stroke="none"
-            >
-              {data.map((d) => (
-                <Cell key={d.name} fill={d.color} />
-              ))}
-            </Pie>
-            <Tooltip {...chartTooltip} />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-      <div className="mt-2 grid grid-cols-3 gap-2 text-center">
-        {data.map((d) => (
-          <div key={d.name} className="rounded-lg border border-border/60 bg-surface/40 p-2">
-            <div className="mx-auto mb-1 h-2 w-2 rounded-full" style={{ background: d.color }} />
-            <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
-              {d.name}
-            </div>
-            <div className="text-sm font-semibold">{d.value}%</div>
-          </div>
-        ))}
-      </div>
-    </Card>
-  );
-}
-function AnalystCard({ report }) {
-  const a = report.analyst;
-
-  // Terminology mapping function for consensus
-  const getMappedConsensus = () => {
-    const rawConsensus = a.consensus;
-    if (!rawConsensus) {
-      // Determine consensus from the highest recommendation count if string is empty
-      const buyVal = Number(a.buy) || 0;
-      const holdVal = Number(a.hold) || 0;
-      const sellVal = Number(a.sell) || 0;
-
-      if (buyVal > holdVal && buyVal > sellVal) return "Positive";
-      if (sellVal > buyVal && sellVal > holdVal) return "Negative";
-      return "Neutral";
-    }
-
-    const consensusLower = rawConsensus.toLowerCase();
-
-    // Map Positive terms: buy, strong buy, moderate buy, outperform, overweight, positive
-    if (
-      consensusLower.includes("buy") || 
-      consensusLower.includes("positive") || 
-      consensusLower.includes("outperform") || 
-      consensusLower.includes("overweight")
-    ) {
-      return "Positive";
-    }
-
-    // Map Negative terms: sell, strong sell, underperform, underweight, negative
-    if (
-      consensusLower.includes("sell") || 
-      consensusLower.includes("negative") || 
-      consensusLower.includes("underperform") || 
-      consensusLower.includes("underweight")
-    ) {
-      return "Negative";
-    }
-
-    // Default or Hold/Neutral mapping
-    return "Neutral";
-  };
-
-  const displayConsensus = getMappedConsensus();
-
-  return (
-    <Card>
-      <SectionTitle icon={<Users className="h-4 w-4" />} title="Analyst Recommendations" />
-      <div className="grid grid-cols-3 gap-2">
-        <StatPill label="Positive Analysts" value={a.buy} tone="success" />
-        <StatPill label="Neutral Analysts" value={a.hold} tone="warning" />
-        <StatPill label="Negative Analysts" value={a.sell} tone="destructive" />
-      </div>
-      <div className="mt-4 rounded-xl border border-primary/30 bg-primary/10 p-3">
-        <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Consensus</div>
-        <div className="mt-0.5 text-lg font-bold text-primary">{displayConsensus}</div>
-        <div className="mt-2 flex items-center justify-between text-xs">
-          <span className="text-muted-foreground">12-Month Price Target</span>
-          <span className="font-semibold text-foreground">{a.priceTarget}</span>
-        </div>
-      </div>
-    </Card>
-  );
-}
-function StatPill({ label, value, tone }) {
-  return (
-    <div className="rounded-xl border border-border/60 bg-surface/40 p-3 text-center">
-      <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</div>
-      <div className="mt-1 text-2xl font-bold" style={{ color: `var(--color-${tone})` }}>
-        {value}
-      </div>
+                <span style={{ color, marginTop: "0.1rem", flexShrink: 0 }}>{icon}</span>
+                {item}
+              </motion.li>
+            ))}
+          </ul>
+        </Panel>
+      ))}
     </div>
   );
 }
-function CompetitorTable({ report }) {
-  const cols = ["Company", "Revenue", "Growth", "Market Cap", "P/E", "Margins"];
-  const sanitizeVal = (val) => {
-    if (!val || val === "0" || val === "0.0" || val === "0%" || val === "0.0%" || val === "N/A" || val === "-") {
-      return "N/A";
-    }
-    return val;
-  };
+
+// ==============================
+// NEWS PANEL
+// ==============================
+function NewsPanel({ report }) {
+  const sentColors = { positive: "#10B981", neutral: "#F59E0B", negative: "#EF4444" };
   return (
-    <Card>
-      <SectionTitle
-        icon={<Building2 className="h-4 w-4" />}
-        title="Competitor Comparison"
-        subtitle="Peer benchmark"
-      />
-      <div className="overflow-x-auto scrollbar-thin">
-        <table className="w-full text-sm">
+    <Panel>
+      <PanelTitle icon={<Newspaper className="h-4 w-4" />} label="Latest News" sub="AI-Scored Sentiment" />
+      <div className="space-y-0">
+        {report.news.map((n, i) => (
+          <motion.article
+            key={n.headline}
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.05 }}
+            className="news-item"
+          >
+            <div className="pt-1">
+              <div
+                className="cmd-badge"
+                style={{ background: `${sentColors[n.sentiment]}0D`, color: sentColors[n.sentiment], border: `1px solid ${sentColors[n.sentiment]}25` }}
+              >
+                {n.sentiment}
+              </div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.58rem", color: "#3D4060", marginTop: "0.4rem" }}>
+                {n.time}
+              </div>
+            </div>
+            <div>
+              <div className="font-semibold text-sm leading-snug mb-1" style={{ color: "#C8C9D8" }}>{n.headline}</div>
+              <div className="text-xs leading-relaxed" style={{ color: "#5A5B72" }}>{n.summary}</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: "#3D4060", marginTop: "0.4rem" }}>{n.source}</div>
+            </div>
+          </motion.article>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+// ==============================
+// COMPETITOR TABLE
+// ==============================
+function CompetitorTable({ report }) {
+  const cols = ["Company", "Revenue", "Growth", "Market Cap", "P/E Ratio", "Margins"];
+  const sanitize = (v) => (!v || v === "0" || v === "0.0" || v === "0%" || v === "N/A" || v === "-") ? "—" : v;
+  return (
+    <Panel>
+      <PanelTitle icon={<Building2 className="h-4 w-4" />} label="Competitor Comparison" sub="Peer Benchmark" />
+      <div className="overflow-x-auto scrollbar-thin rounded-lg" style={{ border: "1px solid rgba(255,255,255,0.06)" }}>
+        <table className="w-full" style={{ minWidth: 600 }}>
           <thead>
-            <tr className="text-left text-[10px] uppercase tracking-widest text-muted-foreground">
+            <tr>
               {cols.map((c) => (
-                <th key={c} className="py-2 pr-4 font-medium">
-                  {c}
-                </th>
+                <th key={c} className="comp-table-head text-left" style={{ fontFamily: "var(--font-mono)" }}>{c}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {report.competitors.map((c, i) => (
-              <tr
-                key={c.name}
-                className={`border-t border-border/60 ${i === 0 ? "bg-primary/5" : ""}`}
-              >
-                <td className="py-3 pr-4 font-medium">
-                  <div className="flex items-center gap-2">
-                    <div className="grid h-7 w-7 place-items-center rounded-lg bg-surface text-[11px] font-bold ring-1 ring-border">
+              <tr key={c.name} className="comp-table-row" style={{ background: i === 0 ? "rgba(16,185,129,0.04)" : "transparent" }}>
+                <td className="comp-table-cell font-semibold">
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-lg text-xs font-black"
+                      style={{ background: i === 0 ? "rgba(16,185,129,0.1)" : "rgba(255,255,255,0.04)", color: i === 0 ? "#10B981" : "#5A5B72", border: `1px solid ${i === 0 ? "rgba(16,185,129,0.2)" : "rgba(255,255,255,0.06)"}` }}>
                       {c.name[0]}
                     </div>
-                    {c.name}
+                    <span style={{ color: "#C8C9D8" }}>{c.name}</span>
                     {i === 0 && (
-                      <span className="rounded bg-primary/20 px-1.5 py-0.5 text-[10px] text-primary">
-                        You
+                      <span className="cmd-badge" style={{ background: "rgba(16,185,129,0.08)", color: "#10B981", border: "1px solid rgba(16,185,129,0.2)" }}>
+                        TARGET
                       </span>
                     )}
                   </div>
                 </td>
-                <td className="py-3 pr-4">{sanitizeVal(c.revenue)}</td>
-                <td className="py-3 pr-4 text-success">{sanitizeVal(c.growth)}</td>
-                <td className="py-3 pr-4">{sanitizeVal(c.marketCap)}</td>
-                <td className="py-3 pr-4">{sanitizeVal(c.pe)}</td>
-                <td className="py-3 pr-4">{sanitizeVal(c.margins)}</td>
+                <td className="comp-table-cell">{sanitize(c.revenue)}</td>
+                <td className="comp-table-cell" style={{ color: "#10B981" }}>{sanitize(c.growth)}</td>
+                <td className="comp-table-cell">{sanitize(c.marketCap)}</td>
+                <td className="comp-table-cell">{sanitize(c.pe)}</td>
+                <td className="comp-table-cell">{sanitize(c.margins)}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-    </Card>
+    </Panel>
   );
 }
-function ProsConsGrid({ report }) {
-  return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-      <Card>
-        <SectionTitle icon={<Check className="h-4 w-4" />} title="Pros" />
-        <ul className="space-y-2">
-          {report.pros.map((p, i) => (
-            <motion.li
-              key={p}
-              initial={{ opacity: 0, x: -10 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
-              className="flex items-start gap-2 rounded-lg border border-success/20 bg-success/5 p-3 text-sm"
-            >
-              <Check className="mt-0.5 h-4 w-4 shrink-0 text-success" />
-              {p}
-            </motion.li>
-          ))}
-        </ul>
-      </Card>
-      <Card>
-        <SectionTitle icon={<XCircle className="h-4 w-4" />} title="Cons" />
-        <ul className="space-y-2">
-          {report.cons.map((p, i) => (
-            <motion.li
-              key={p}
-              initial={{ opacity: 0, x: -10 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
-              className="flex items-start gap-2 rounded-lg border border-destructive/20 bg-destructive/5 p-3 text-sm"
-            >
-              <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
-              {p}
-            </motion.li>
-          ))}
-        </ul>
-      </Card>
-    </div>
-  );
-}
+
+// ==============================
+// THESIS CARD
+// ==============================
 function ThesisCard({ report }) {
-  const sanitizeThesisText = (text) => {
-    if (!text) return "";
-    let sanitized = text;
-    // Replace "BUY/HOLD/SELL recommendation(s)" first
-    sanitized = sanitized.replace(/\bBUY recommendation\b/gi, "INVEST recommendation");
-    sanitized = sanitized.replace(/\bBUY recommendations\b/gi, "INVEST recommendations");
-    sanitized = sanitized.replace(/\bHOLD recommendation\b/gi, "PASS recommendation");
-    sanitized = sanitized.replace(/\bHOLD recommendations\b/gi, "PASS recommendations");
-    sanitized = sanitized.replace(/\bSELL recommendation\b/gi, "PASS recommendation");
-    sanitized = sanitized.replace(/\bSELL recommendations\b/gi, "PASS recommendations");
-
-    // Replace "a BUY" / "A BUY" to "an INVEST" / "An INVEST"
-    sanitized = sanitized.replace(/\ba BUY\b/g, "an INVEST");
-    sanitized = sanitized.replace(/\bA BUY\b/g, "An INVEST");
-    sanitized = sanitized.replace(/\ba buy\b/g, "an invest");
-    sanitized = sanitized.replace(/\bA buy\b/g, "An invest");
-
-    // Replace "BUY/HOLD/SELL" with word boundaries
-    sanitized = sanitized.replace(/\bBUY\b/g, "INVEST");
-    sanitized = sanitized.replace(/\bbuy\b/g, "invest");
-    sanitized = sanitized.replace(/\bHOLD\b/g, "PASS");
-    sanitized = sanitized.replace(/\bhold\b/g, "pass");
-    sanitized = sanitized.replace(/\bSELL\b/g, "PASS");
-    sanitized = sanitized.replace(/\bsell\b/g, "pass");
-
-    return sanitized;
+  const sanitize = (t) => {
+    if (!t) return "";
+    return t
+      .replace(/\bBUY recommendation\b/gi, "INVEST recommendation")
+      .replace(/\bHOLD recommendation\b/gi, "PASS recommendation")
+      .replace(/\bSELL recommendation\b/gi, "PASS recommendation")
+      .replace(/\ba BUY\b/g, "an INVEST").replace(/\bA BUY\b/g, "An INVEST")
+      .replace(/\bBUY\b/g, "INVEST").replace(/\bbuy\b/g, "invest")
+      .replace(/\bHOLD\b/g, "PASS").replace(/\bhold\b/g, "pass")
+      .replace(/\bSELL\b/g, "PASS").replace(/\bsell\b/g, "pass");
   };
-
-  const sanitizedThesis = sanitizeThesisText(report.thesis);
-
   return (
-    <Card>
-      <div className="mb-4 flex items-center gap-3">
-        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/20">
-          <FileText className="h-4 w-4" />
-        </div>
-        <div className="min-w-0">
-          <h3 className="truncate text-base font-semibold">AI Investment Thesis</h3>
-          <p className="truncate text-xs text-muted-foreground">Generated report · Markdown</p>
-        </div>
+    <Panel>
+      <PanelTitle icon={<FileText className="h-4 w-4" />} label="AI Investment Thesis" sub="Generated Report · Markdown" />
+      <div className="markdown-body rounded-lg p-5" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+        <ReactMarkdown>{sanitize(report.thesis)}</ReactMarkdown>
       </div>
-      <div className="markdown-body rounded-xl border border-border/60 bg-surface/40 p-5">
-        <ReactMarkdown>{sanitizedThesis}</ReactMarkdown>
-      </div>
-    </Card>
+    </Panel>
   );
 }
 
-function SourcesGrid({ report }) {
-  const getSourceDescription = (sourceName) => {
-    const name = (sourceName || "").toLowerCase();
-    if (name.includes("sec") || name.includes("filing") || name.includes("10-k") || name.includes("10-q")) {
-      return "Official regulatory filings and financial disclosures";
-    }
-    if (name.includes("yahoo") || name.includes("finance")) {
-      return "Real-time stock charts, profile, and historical data";
-    }
-    if (name.includes("annual report") || name.includes("shareholder letter")) {
-      return "Direct corporate performance summaries and investor reports";
-    }
-    if (name.includes("bloomberg") || name.includes("reuters") || name.includes("cnbc") || name.includes("news")) {
-      return "Market news coverage and analyst reporting";
-    }
-    if (name.includes("website") || name.includes("company") || name.includes("corporate")) {
-      return "Official company web portal and investor relations";
-    }
-    return "Market information source";
-  };
-
-  const getCleanUrl = (source) => {
-    const url = source.url || "";
-    const name = (source.name || "").toLowerCase();
+// ==============================
+// SOURCES PANEL
+// ==============================
+function SourcesPanel({ report }) {
+  const getCleanUrl = (s) => {
+    const url = s.url || "";
+    const name = (s.name || "").toLowerCase();
     const ticker = report.overview?.ticker || "";
-
-    // 1. SEC filings: redirect to guaranteed company filings query on SEC EDGAR search
-    if (name.includes("sec") || name.includes("filing") || name.includes("10-k") || name.includes("10-q")) {
-      if (ticker) {
-        return `https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=${ticker}`;
-      }
-      return "https://www.sec.gov/edgar/searchedgar/companysearch";
-    }
-
-    // 2. Yahoo Finance: redirect to live quote quote details
-    if (name.includes("yahoo") || name.includes("finance")) {
-      if (ticker) {
-        return `https://finance.yahoo.com/quote/${ticker}`;
-      }
-      return "https://finance.yahoo.com";
-    }
-
-    // 3. Alpha Vantage: redirect to the official Alpha Vantage homepage to prevent raw JSON key errors
-    if (name.includes("alpha") || name.includes("vantage") || url.includes("alphavantage")) {
-      return "https://www.alphavantage.co";
-    }
-
-    // 4. Corporate website: fallback to overview website field if blank
-    if (name.includes("website") || name.includes("company") || name.includes("corporate")) {
-      if (!url || url === "#" || url === "/") {
-        const companyWeb = report.overview?.website || "";
-        if (companyWeb) {
-          return companyWeb.startsWith("http") ? companyWeb : `https://${companyWeb}`;
-        }
-      }
-    }
-
-    // 5. Missing URL fallback: Google search query
+    if (name.includes("sec") || name.includes("10-k")) return `https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=${ticker}`;
+    if (name.includes("yahoo") || name.includes("finance")) return ticker ? `https://finance.yahoo.com/quote/${ticker}` : "https://finance.yahoo.com";
+    if (name.includes("alpha") || name.includes("vantage")) return "https://www.alphavantage.co";
     if (!url || url === "#" || url === "/") {
-      return `https://www.google.com/search?q=${encodeURIComponent((report.overview?.name || "") + " investment research")}`;
+      const w = report.overview?.website || "";
+      return w ? (w.startsWith("http") ? w : `https://${w}`) : `https://www.google.com/search?q=${encodeURIComponent((report.overview?.name || "") + " investor relations")}`;
     }
-
     return url;
   };
-
-  const displaySources = (report.sources || []).filter((s) => {
-    const name = (s.name || "").toLowerCase();
-    return (
-      !name.includes("mongodb") &&
-      !name.includes("langchain") &&
-      !name.includes("groq") &&
-      !name.includes("react") &&
-      !name.includes("node")
-    );
+  const sources = (report.sources || []).filter(s => {
+    const n = (s.name || "").toLowerCase();
+    return !n.includes("mongodb") && !n.includes("langchain") && !n.includes("groq") && !n.includes("react") && !n.includes("node");
   });
-
   return (
-    <Card>
-      <SectionTitle
-        icon={<FileText className="h-4 w-4" />}
-        title="Sources Used"
-        subtitle="Verified data providers"
-      />
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {displaySources.map((s, i) => (
+    <Panel>
+      <PanelTitle icon={<FileText className="h-4 w-4" />} label="Data Sources" sub="Verified Providers" />
+      <div className="space-y-2">
+        {sources.map((s, i) => (
           <motion.a
             key={s.name}
             href={getCleanUrl(s)}
-            target="_blank"
-            rel="noopener noreferrer"
-            initial={{ opacity: 0, y: 10 }}
+            target="_blank" rel="noopener noreferrer"
+            initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.04 }}
-            className="group flex flex-col justify-between gap-3 rounded-xl border border-border/60 bg-surface/40 p-3 transition-all hover:border-primary/40 hover:bg-primary/10"
+            className="group flex items-center justify-between rounded-lg p-3 transition-all"
+            style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.06)" }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(16,185,129,0.25)"; e.currentTarget.style.background = "rgba(16,185,129,0.04)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; e.currentTarget.style.background = "rgba(255,255,255,0.025)"; }}
           >
-            <div className="flex items-start justify-between gap-2 w-full">
-              <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-semibold text-foreground">{s.name}</div>
-                <div className="text-[10px] uppercase tracking-widest text-primary/70 font-semibold mt-0.5">
-                  {s.type}
-                </div>
-              </div>
-              <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground transition-all group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            <div>
+              <div className="text-sm font-semibold" style={{ color: "#C8C9D8" }}>{s.name}</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.58rem", color: "#3D4060", letterSpacing: "0.08em", textTransform: "uppercase", marginTop: "0.15rem" }}>{s.type}</div>
             </div>
-            <div className="text-xs text-muted-foreground/80 leading-normal mt-0.5">
-              {getSourceDescription(s.name)}
-            </div>
+            <ArrowUpRight className="h-3.5 w-3.5 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" style={{ color: "#3D4060" }} />
           </motion.a>
         ))}
       </div>
-    </Card>
+    </Panel>
+  );
+}
+
+// ==============================
+// RISK PANEL
+// ==============================
+function RiskPanel({ report }) {
+  const levelColor = { low: "#10B981", medium: "#F59E0B", high: "#EF4444" };
+  const score = report.risk.score;
+  const level = score <= 35 ? "low" : score > 65 ? "high" : "medium";
+  return (
+    <Panel accentColor={levelColor[level]}>
+      <PanelTitle icon={<Shield className="h-4 w-4" />} label="Risk Analysis" sub="Composite Exposure" />
+
+      {/* Overall Score */}
+      <div className="rounded-lg p-4 mb-4" style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="flex items-center justify-between mb-2">
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "#3D4060", letterSpacing: "0.1em", textTransform: "uppercase" }}>Composite Risk Score</span>
+          <span className="font-black text-sm" style={{ color: levelColor[level] }}>{score} / 100</span>
+        </div>
+        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.05)" }}>
+          <motion.div
+            className="h-full rounded-full"
+            style={{ background: "linear-gradient(90deg, #10B981, #F59E0B, #EF4444)" }}
+            initial={{ width: 0 }}
+            whileInView={{ width: `${score}%` }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.2 }}
+          />
+        </div>
+      </div>
+
+      {/* Risk Factors */}
+      <div className="grid grid-cols-2 gap-2">
+        {report.risk.factors.map((f) => (
+          <div
+            key={f.name}
+            className="flex items-center justify-between rounded-lg px-3 py-2.5"
+            style={{
+              background: `${levelColor[f.level]}08`,
+              border: `1px solid ${levelColor[f.level]}20`,
+            }}
+          >
+            <span className="text-xs" style={{ color: "#9394A8" }}>{f.name}</span>
+            <span
+              className="cmd-badge"
+              style={{ background: `${levelColor[f.level]}15`, color: levelColor[f.level] }}
+            >
+              {f.level}
+            </span>
+          </div>
+        ))}
+      </div>
+    </Panel>
   );
 }

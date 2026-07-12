@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -18,19 +12,12 @@ export function SettingsModal({ isOpen, onClose }) {
   const [model, setModel] = useState("llama-3.3-70b-versatile");
   const [temperature, setTemperature] = useState(0.2);
 
-  // Load configuration from localStorage when modal opens
   useEffect(() => {
     if (isOpen) {
-      // Migrate: remove any decommissioned Groq model IDs from localStorage
-      const DECOMMISSIONED_MODELS = ["llama-3.1-70b-versatile", "llama-2-70b-4096", "mixtral-8x7b-32768"];
-      const savedModel = localStorage.getItem("groq_model") || "llama-3.3-70b-versatile";
-      const validModel = DECOMMISSIONED_MODELS.includes(savedModel)
-        ? "llama-3.3-70b-versatile"
-        : savedModel;
-      if (DECOMMISSIONED_MODELS.includes(savedModel)) {
-        localStorage.setItem("groq_model", "llama-3.3-70b-versatile");
-      }
-
+      const DECOMMISSIONED = ["llama-3.1-70b-versatile", "llama-2-70b-4096", "mixtral-8x7b-32768"];
+      const saved = localStorage.getItem("groq_model") || "llama-3.3-70b-versatile";
+      const validModel = DECOMMISSIONED.includes(saved) ? "llama-3.3-70b-versatile" : saved;
+      if (DECOMMISSIONED.includes(saved)) localStorage.setItem("groq_model", "llama-3.3-70b-versatile");
       setGroqApiKey(localStorage.getItem("groq_api_key") || "");
       setTavilyApiKey(localStorage.getItem("tavily_api_key") || "");
       setModel(validModel);
@@ -43,193 +30,147 @@ export function SettingsModal({ isOpen, onClose }) {
     localStorage.setItem("tavily_api_key", tavilyApiKey.trim());
     localStorage.setItem("groq_model", model);
     localStorage.setItem("groq_temperature", temperature.toString());
-
-    toast.success("Configuration saved successfully", {
-      description: "Engine parameters updated for your next analysis.",
-    });
+    toast.success("Configuration saved", { description: "Engine parameters updated for your next analysis." });
     onClose();
+  };
+
+  const inputStyle = {
+    background: "#050508",
+    border: "1px solid rgba(255,255,255,0.08)",
+    color: "#E8E8F0",
+    fontFamily: "var(--font-mono)",
+    fontSize: "0.78rem",
+  };
+
+  const labelStyle = {
+    fontFamily: "var(--font-mono)",
+    fontSize: "0.65rem",
+    letterSpacing: "0.1em",
+    textTransform: "uppercase",
+    color: "#5A5B72",
+    display: "block",
+    marginBottom: "0.5rem",
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
-        className="max-w-[500px] p-6 rounded-2xl"
-        style={{
-          background: "oklch(0.10 0.01 260)",
-          border: "1px solid oklch(1 0 0 / 0.1)",
-          boxShadow: "0 24px 80px oklch(0 0 0 / 0.8), 0 0 0 1px oklch(0.65 0.25 255 / 0.08)",
-        }}
+        className="max-w-[480px] p-6 rounded-xl"
+        style={{ background: "#0D0E14", border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 24px 80px rgba(0,0,0,0.8)" }}
       >
-        <DialogHeader
-          className="flex flex-row items-center justify-between space-y-0 pb-4"
-          style={{ borderBottom: "1px solid oklch(1 0 0 / 0.07)" }}
-        >
-          <DialogTitle
-            className="text-xl font-bold tracking-tight"
-            style={{ color: "oklch(0.92 0.01 255)" }}
-          >
-            Analysis Engine Parameters
-          </DialogTitle>
+        {/* Header */}
+        <DialogHeader className="pb-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg"
+              style={{ background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.2)" }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", fontWeight: 700, color: "#10B981" }}>⚙</span>
+            </div>
+            <div>
+              <DialogTitle className="text-sm font-bold" style={{ color: "#E8E8F0" }}>Analysis Engine Parameters</DialogTitle>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.58rem", color: "#3D4060", letterSpacing: "0.1em", marginTop: "0.1rem" }}>
+                APEX RESEARCH · CONFIGURATION
+              </div>
+            </div>
+          </div>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
+        <div className="space-y-5 py-4">
           {/* Groq API Key */}
-          <div className="space-y-2">
-            <label className="text-sm font-semibold tracking-tight" style={{ color: "oklch(0.72 0.01 255)" }}>
-              Groq API Key
-            </label>
+          <div>
+            <label style={labelStyle}>Groq API Key</label>
             <Input
               type="password"
-              placeholder="gsk_... (Enter your Groq API Key)"
+              placeholder="gsk_..."
               value={groqApiKey}
               onChange={(e) => setGroqApiKey(e.target.value)}
-              className="font-mono"
-              style={{
-                background: "oklch(0.08 0.01 260)",
-                border: "1px solid oklch(1 0 0 / 0.1)",
-                color: "oklch(0.88 0.01 255)",
-              }}
+              style={inputStyle}
+              className="w-full"
             />
-            <p className="text-[11px]" style={{ color: "oklch(0.40 0.01 255)" }}>
-              Powers the AI language model (LLM). Leave blank to use the server default key.{" "}
-              <a
-                href="https://console.groq.com/keys"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: "oklch(0.65 0.25 255)" }}
-                className="underline underline-offset-2 hover:opacity-80"
-              >
-                Get a free key →
-              </a>
+            <p className="mt-1.5 text-xs" style={{ color: "#3D4060" }}>
+              Powers the AI LLM engine.{" "}
+              <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer"
+                style={{ color: "#10B981" }}>Get a free key →</a>
             </p>
           </div>
 
-          {/* Tavily API Key */}
-          <div className="space-y-2">
-            <label className="text-sm font-semibold tracking-tight flex items-center gap-2" style={{ color: "oklch(0.72 0.01 255)" }}>
+          {/* Tavily Key */}
+          <div>
+            <label style={labelStyle}>
               Tavily Search Key
-              <span
-                className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                style={{
-                  background: "oklch(0.65 0.25 255 / 0.1)",
-                  color: "oklch(0.65 0.25 255)",
-                  border: "1px solid oklch(0.65 0.25 255 / 0.2)",
-                }}
-              >
-                Real-time Search
+              <span className="ml-2" style={{ background: "rgba(16,185,129,0.08)", color: "#10B981", border: "1px solid rgba(16,185,129,0.2)", padding: "0.1rem 0.4rem", borderRadius: "0.25rem", fontWeight: 700 }}>
+                LIVE SEARCH
               </span>
             </label>
             <Input
               type="password"
-              placeholder="tvly-... (Enter your Tavily API Key)"
+              placeholder="tvly-..."
               value={tavilyApiKey}
               onChange={(e) => setTavilyApiKey(e.target.value)}
-              className="font-mono"
-              style={{
-                background: "oklch(0.08 0.01 260)",
-                border: "1px solid oklch(1 0 0 / 0.1)",
-                color: "oklch(0.88 0.01 255)",
-              }}
+              style={inputStyle}
+              className="w-full"
             />
-            <p className="text-[11px]" style={{ color: "oklch(0.40 0.01 255)" }}>
-              Powers live web search for real-time news & financial data.{" "}
-              <a
-                href="https://app.tavily.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: "oklch(0.65 0.25 255)" }}
-                className="underline underline-offset-2 hover:opacity-80"
-              >
-                Get a free key →
-              </a>
+            <p className="mt-1.5 text-xs" style={{ color: "#3D4060" }}>
+              Powers real-time news & market data.{" "}
+              <a href="https://app.tavily.com" target="_blank" rel="noopener noreferrer"
+                style={{ color: "#10B981" }}>Get a free key →</a>
             </p>
           </div>
 
-          {/* LangChain Inference Model */}
-          <div className="space-y-2">
-            <label className="text-sm font-semibold tracking-tight" style={{ color: "oklch(0.72 0.01 255)" }}>
-              Inference Analysis Model
-            </label>
+          {/* Model */}
+          <div>
+            <label style={labelStyle}>Inference Model</label>
             <Select value={model} onValueChange={setModel}>
-              <SelectTrigger
-                className="w-full"
-                style={{
-                  background: "oklch(0.08 0.01 260)",
-                  border: "1px solid oklch(1 0 0 / 0.1)",
-                  color: "oklch(0.88 0.01 255)",
-                }}
-              >
+              <SelectTrigger className="w-full" style={{ ...inputStyle, height: 38 }}>
                 <SelectValue placeholder="Select model" />
               </SelectTrigger>
-              <SelectContent
-                style={{
-                  background: "oklch(0.11 0.01 260)",
-                  border: "1px solid oklch(1 0 0 / 0.12)",
-                }}
-              >
-                <SelectItem value="llama-3.3-70b-versatile" className="cursor-pointer" style={{ color: "oklch(0.82 0.01 255)" }}>
-                  Llama 3.3 70B (Versatile)
+              <SelectContent style={{ background: "#0D0E14", border: "1px solid rgba(255,255,255,0.1)" }}>
+                <SelectItem value="llama-3.3-70b-versatile" style={{ color: "#C8C9D8", fontFamily: "var(--font-mono)", fontSize: "0.75rem" }}>
+                  Llama 3.3 70B · Versatile
                 </SelectItem>
-                <SelectItem value="llama-3.1-8b-instant" className="cursor-pointer" style={{ color: "oklch(0.82 0.01 255)" }}>
-                  Llama 3.3 8B (Instant)
+                <SelectItem value="llama-3.1-8b-instant" style={{ color: "#C8C9D8", fontFamily: "var(--font-mono)", fontSize: "0.75rem" }}>
+                  Llama 3.3 8B · Instant
                 </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* Temperature */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-semibold tracking-tight" style={{ color: "oklch(0.72 0.01 255)" }}>
-                Temperature (Creativity vs. Precision)
-              </label>
-              <span className="text-sm font-bold font-mono" style={{ color: "oklch(0.65 0.25 255)" }}>
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <label style={labelStyle}>Temperature</label>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", fontWeight: 700, color: "#10B981" }}>
                 {temperature.toFixed(1)}
               </span>
             </div>
-
             <Slider
               value={[temperature]}
-              min={0}
-              max={1}
-              step={0.1}
+              min={0} max={1} step={0.1}
               onValueChange={(val) => setTemperature(val[0])}
               className="py-2"
             />
-
-            <div className="flex justify-between text-[10px] font-medium tracking-wide" style={{ color: "oklch(0.38 0.01 255)" }}>
-              <span>Precise / Analytical (0.0)</span>
-              <span>Creative / Synthetic (1.0)</span>
+            <div className="flex justify-between mt-1.5" style={{ fontFamily: "var(--font-mono)", fontSize: "0.58rem", color: "#2A2B3A" }}>
+              <span>PRECISE (0.0)</span>
+              <span>CREATIVE (1.0)</span>
             </div>
           </div>
         </div>
 
-        {/* Buttons */}
-        <div
-          className="flex justify-end gap-3 pt-4"
-          style={{ borderTop: "1px solid oklch(1 0 0 / 0.07)" }}
-        >
+        {/* Footer */}
+        <div className="flex gap-2.5 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
           <Button
             variant="ghost"
             onClick={onClose}
-            className="px-5 cursor-pointer font-medium"
-            style={{
-              background: "oklch(1 0 0 / 0.04)",
-              border: "1px solid oklch(1 0 0 / 0.09)",
-              color: "oklch(0.52 0.02 255)",
-            }}
+            className="flex-1 cursor-pointer font-semibold text-sm border-none"
+            style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", color: "#5A5B72" }}
           >
             Cancel
           </Button>
           <Button
             onClick={handleSave}
-            className="px-5 text-white cursor-pointer font-bold border-none"
-            style={{
-              background: "linear-gradient(135deg, oklch(0.65 0.25 255), oklch(0.60 0.22 280))",
-              boxShadow: "0 4px 20px oklch(0.65 0.25 255 / 0.35)",
-            }}
+            className="flex-1 cursor-pointer font-bold text-sm border-none"
+            style={{ background: "linear-gradient(135deg, #10B981, #059669)", color: "#050508" }}
           >
-            Save Parameters
+            Save Config
           </Button>
         </div>
       </DialogContent>
