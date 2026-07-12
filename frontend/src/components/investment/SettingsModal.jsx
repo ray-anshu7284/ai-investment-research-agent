@@ -52,9 +52,22 @@ export function SettingsModal({ isOpen, onClose }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-[500px] border border-border/80 bg-background/95 p-6 shadow-2xl backdrop-blur-md rounded-2xl">
-        <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4 border-b border-border/40">
-          <DialogTitle className="text-xl font-bold tracking-tight text-foreground">
+      <DialogContent
+        className="max-w-[500px] p-6 rounded-2xl"
+        style={{
+          background: "oklch(0.10 0.01 260)",
+          border: "1px solid oklch(1 0 0 / 0.1)",
+          boxShadow: "0 24px 80px oklch(0 0 0 / 0.8), 0 0 0 1px oklch(0.65 0.25 255 / 0.08)",
+        }}
+      >
+        <DialogHeader
+          className="flex flex-row items-center justify-between space-y-0 pb-4"
+          style={{ borderBottom: "1px solid oklch(1 0 0 / 0.07)" }}
+        >
+          <DialogTitle
+            className="text-xl font-bold tracking-tight"
+            style={{ color: "oklch(0.92 0.01 255)" }}
+          >
             Analysis Engine Parameters
           </DialogTitle>
         </DialogHeader>
@@ -62,7 +75,7 @@ export function SettingsModal({ isOpen, onClose }) {
         <div className="space-y-6 py-4">
           {/* Groq API Key */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold tracking-tight text-foreground/90">
+            <label className="text-sm font-semibold tracking-tight" style={{ color: "oklch(0.72 0.01 255)" }}>
               Groq API Key
             </label>
             <Input
@@ -70,15 +83,21 @@ export function SettingsModal({ isOpen, onClose }) {
               placeholder="gsk_... (Enter your Groq API Key)"
               value={groqApiKey}
               onChange={(e) => setGroqApiKey(e.target.value)}
-              className="font-mono bg-surface/50 border-border/60 focus-visible:ring-primary/50 text-foreground"
+              className="font-mono"
+              style={{
+                background: "oklch(0.08 0.01 260)",
+                border: "1px solid oklch(1 0 0 / 0.1)",
+                color: "oklch(0.88 0.01 255)",
+              }}
             />
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-[11px]" style={{ color: "oklch(0.40 0.01 255)" }}>
               Powers the AI language model (LLM). Leave blank to use the server default key.{" "}
               <a
                 href="https://console.groq.com/keys"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary underline underline-offset-2 hover:opacity-80"
+                style={{ color: "oklch(0.65 0.25 255)" }}
+                className="underline underline-offset-2 hover:opacity-80"
               >
                 Get a free key →
               </a>
@@ -87,9 +106,16 @@ export function SettingsModal({ isOpen, onClose }) {
 
           {/* Tavily API Key */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold tracking-tight text-foreground/90">
-              Tavily Search Key{" "}
-              <span className="text-[10px] font-normal bg-primary/10 text-primary px-1.5 py-0.5 rounded-full ml-1">
+            <label className="text-sm font-semibold tracking-tight flex items-center gap-2" style={{ color: "oklch(0.72 0.01 255)" }}>
+              Tavily Search Key
+              <span
+                className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                style={{
+                  background: "oklch(0.65 0.25 255 / 0.1)",
+                  color: "oklch(0.65 0.25 255)",
+                  border: "1px solid oklch(0.65 0.25 255 / 0.2)",
+                }}
+              >
                 Real-time Search
               </span>
             </label>
@@ -98,15 +124,21 @@ export function SettingsModal({ isOpen, onClose }) {
               placeholder="tvly-... (Enter your Tavily API Key)"
               value={tavilyApiKey}
               onChange={(e) => setTavilyApiKey(e.target.value)}
-              className="font-mono bg-surface/50 border-border/60 focus-visible:ring-primary/50 text-foreground"
+              className="font-mono"
+              style={{
+                background: "oklch(0.08 0.01 260)",
+                border: "1px solid oklch(1 0 0 / 0.1)",
+                color: "oklch(0.88 0.01 255)",
+              }}
             />
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-[11px]" style={{ color: "oklch(0.40 0.01 255)" }}>
               Powers live web search for real-time news & financial data.{" "}
               <a
                 href="https://app.tavily.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary underline underline-offset-2 hover:opacity-80"
+                style={{ color: "oklch(0.65 0.25 255)" }}
+                className="underline underline-offset-2 hover:opacity-80"
               >
                 Get a free key →
               </a>
@@ -115,18 +147,30 @@ export function SettingsModal({ isOpen, onClose }) {
 
           {/* LangChain Inference Model */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold tracking-tight text-foreground/90">
+            <label className="text-sm font-semibold tracking-tight" style={{ color: "oklch(0.72 0.01 255)" }}>
               Inference Analysis Model
             </label>
             <Select value={model} onValueChange={setModel}>
-              <SelectTrigger className="w-full bg-surface/50 border-border/60 text-foreground">
+              <SelectTrigger
+                className="w-full"
+                style={{
+                  background: "oklch(0.08 0.01 260)",
+                  border: "1px solid oklch(1 0 0 / 0.1)",
+                  color: "oklch(0.88 0.01 255)",
+                }}
+              >
                 <SelectValue placeholder="Select model" />
               </SelectTrigger>
-              <SelectContent className="bg-popover border-border/60">
-                <SelectItem value="llama-3.3-70b-versatile" className="cursor-pointer">
+              <SelectContent
+                style={{
+                  background: "oklch(0.11 0.01 260)",
+                  border: "1px solid oklch(1 0 0 / 0.12)",
+                }}
+              >
+                <SelectItem value="llama-3.3-70b-versatile" className="cursor-pointer" style={{ color: "oklch(0.82 0.01 255)" }}>
                   Llama 3.3 70B (Versatile)
                 </SelectItem>
-                <SelectItem value="llama-3.1-8b-instant" className="cursor-pointer">
+                <SelectItem value="llama-3.1-8b-instant" className="cursor-pointer" style={{ color: "oklch(0.82 0.01 255)" }}>
                   Llama 3.3 8B (Instant)
                 </SelectItem>
               </SelectContent>
@@ -136,10 +180,10 @@ export function SettingsModal({ isOpen, onClose }) {
           {/* Temperature */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-semibold tracking-tight text-foreground/90">
+              <label className="text-sm font-semibold tracking-tight" style={{ color: "oklch(0.72 0.01 255)" }}>
                 Temperature (Creativity vs. Precision)
               </label>
-              <span className="text-sm font-bold text-primary font-mono">
+              <span className="text-sm font-bold font-mono" style={{ color: "oklch(0.65 0.25 255)" }}>
                 {temperature.toFixed(1)}
               </span>
             </div>
@@ -153,7 +197,7 @@ export function SettingsModal({ isOpen, onClose }) {
               className="py-2"
             />
 
-            <div className="flex justify-between text-[10px] font-medium text-muted-foreground/80 tracking-wide">
+            <div className="flex justify-between text-[10px] font-medium tracking-wide" style={{ color: "oklch(0.38 0.01 255)" }}>
               <span>Precise / Analytical (0.0)</span>
               <span>Creative / Synthetic (1.0)</span>
             </div>
@@ -161,17 +205,29 @@ export function SettingsModal({ isOpen, onClose }) {
         </div>
 
         {/* Buttons */}
-        <div className="flex justify-end gap-3 pt-4 border-t border-border/40">
+        <div
+          className="flex justify-end gap-3 pt-4"
+          style={{ borderTop: "1px solid oklch(1 0 0 / 0.07)" }}
+        >
           <Button
             variant="ghost"
             onClick={onClose}
-            className="px-5 border border-border/60 hover:bg-surface/50 text-foreground/80 hover:text-foreground cursor-pointer"
+            className="px-5 cursor-pointer font-medium"
+            style={{
+              background: "oklch(1 0 0 / 0.04)",
+              border: "1px solid oklch(1 0 0 / 0.09)",
+              color: "oklch(0.52 0.02 255)",
+            }}
           >
             Cancel
           </Button>
           <Button
             onClick={handleSave}
-            className="px-5 bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 text-white cursor-pointer shadow-[0_0_15px_-3px_var(--color-primary)] font-semibold"
+            className="px-5 text-white cursor-pointer font-bold border-none"
+            style={{
+              background: "linear-gradient(135deg, oklch(0.65 0.25 255), oklch(0.60 0.22 280))",
+              boxShadow: "0 4px 20px oklch(0.65 0.25 255 / 0.35)",
+            }}
           >
             Save Parameters
           </Button>

@@ -12,21 +12,38 @@ import appCss from "../styles.css?url";
 import { reportErrorLog } from "../lib/error-reporting";
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div
+      className="flex min-h-screen items-center justify-center px-4 grid-bg"
+      style={{ background: "oklch(0.08 0.01 260)" }}
+    >
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <div
+          className="text-8xl font-black mb-4"
+          style={{
+            background: "linear-gradient(135deg, oklch(0.72 0.25 255), oklch(0.75 0.22 300))",
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            color: "transparent",
+          }}
+        >
+          404
+        </div>
+        <h2 className="text-xl font-bold mb-2" style={{ color: "oklch(0.92 0.01 255)" }}>
+          Page Not Found
+        </h2>
+        <p className="text-sm mb-8" style={{ color: "oklch(0.52 0.02 255)" }}>
           The page you're looking for doesn't exist or has been moved.
         </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
-          </Link>
-        </div>
+        <Link
+          to="/"
+          className="inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-sm font-bold text-white transition-all hover:scale-[1.02]"
+          style={{
+            background: "linear-gradient(135deg, oklch(0.65 0.25 255), oklch(0.60 0.22 280))",
+            boxShadow: "0 4px 20px oklch(0.65 0.25 255 / 0.35)",
+          }}
+        >
+          Return to Terminal
+        </Link>
       </div>
     </div>
   );
@@ -104,8 +121,16 @@ function RootShell({ children }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body>
+        {/* Terminal scanline effect */}
+        <div className="scanline" />
         {children}
         <Scripts />
       </body>

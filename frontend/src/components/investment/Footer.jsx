@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Github, Linkedin, Mail, Twitter, Cpu } from "lucide-react";
+import { ArrowRight, Check, Github, Linkedin, Mail, Twitter, BarChart2, Shield, Globe, Zap, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -33,7 +33,7 @@ function NewsletterCta() {
     setError(null);
     setStatus("loading");
     try {
-      const response = await subscribeToNewsletter(result.data);
+      await subscribeToNewsletter(result.data);
       setSubscriberEmail(result.data);
       setStatus("success");
       setSuccessOpen(true);
@@ -48,30 +48,62 @@ function NewsletterCta() {
   };
 
   return (
-    <div className="relative mb-14 overflow-hidden rounded-2xl border border-border/60 bg-surface/40 p-6 sm:p-8">
-      <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-primary/20 blur-[80px]" />
-      <div className="pointer-events-none absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-primary-glow/15 blur-[80px]" />
+    <div
+      className="relative mb-16 overflow-hidden rounded-2xl p-8 sm:p-10"
+      style={{
+        background: "linear-gradient(135deg, oklch(0.65 0.25 255 / 0.08) 0%, oklch(0.55 0.22 280 / 0.05) 100%)",
+        border: "1px solid oklch(0.65 0.25 255 / 0.2)",
+        boxShadow: "0 0 60px oklch(0.65 0.25 255 / 0.08)",
+      }}
+    >
+      {/* Ambient glow */}
+      <div
+        className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full opacity-30"
+        style={{ background: "radial-gradient(circle, oklch(0.65 0.25 255 / 0.4), transparent 70%)", filter: "blur(40px)" }}
+      />
+      <div
+        className="pointer-events-none absolute -bottom-16 -left-16 h-48 w-48 rounded-full opacity-20"
+        style={{ background: "radial-gradient(circle, oklch(0.55 0.22 280 / 0.4), transparent 70%)", filter: "blur(40px)" }}
+      />
 
-      <div className="relative grid grid-cols-1 items-center gap-6 md:grid-cols-[minmax(0,1fr)_auto]">
+      <div className="relative grid grid-cols-1 items-center gap-8 lg:grid-cols-[minmax(0,1fr)_auto]">
         <div className="min-w-0">
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] uppercase tracking-widest text-primary">
-            <Mail className="h-3 w-3" /> Weekly digest
+          <div
+            className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest mb-4"
+            style={{
+              background: "oklch(0.65 0.25 255 / 0.1)",
+              border: "1px solid oklch(0.65 0.25 255 / 0.25)",
+              color: "oklch(0.72 0.22 255)",
+            }}
+          >
+            <Mail className="h-3 w-3" />
+            Weekly Research Digest
           </div>
-          <h3 className="mt-3 text-xl font-semibold tracking-tight sm:text-2xl">
-            Institutional investment research, delivered every Monday
+          <h3
+            className="text-xl font-bold tracking-tight sm:text-2xl mb-2"
+            style={{ color: "oklch(0.92 0.01 255)" }}
+          >
+            Institutional intelligence, delivered every Monday
           </h3>
-          <p className="mt-1.5 max-w-lg text-sm text-muted-foreground">
-            Curated company deep-dives, risk signals, and analyst-grade thesis breakdowns. No spam,
-            unsubscribe anytime.
+          <p className="max-w-lg text-sm leading-relaxed" style={{ color: "oklch(0.52 0.02 255)" }}>
+            Curated company deep-dives, risk signals, and analyst-grade thesis breakdowns.
+            No spam — unsubscribe anytime.
           </p>
         </div>
 
-        <form onSubmit={submit} noValidate className="w-full md:w-auto">
-          <div className="flex w-full flex-col gap-2 md:w-[420px]">
+        <form onSubmit={submit} noValidate className="w-full lg:w-auto">
+          <div className="flex w-full flex-col gap-2.5 lg:w-[420px]">
             <div
-              className={`group relative flex items-center gap-2 rounded-xl border bg-background/60 p-1.5 backdrop-blur transition-all focus-within:border-primary/60 focus-within:shadow-[0_0_25px_-8px_var(--color-primary)] ${error ? "border-destructive/60" : "border-border"}`}
+              className={`relative flex items-center gap-2 rounded-xl p-1.5 transition-all ${error ? "" : ""}`}
+              style={{
+                background: "oklch(0.08 0.01 260 / 0.8)",
+                border: error
+                  ? "1px solid oklch(0.58 0.22 25 / 0.6)"
+                  : "1px solid oklch(1 0 0 / 0.1)",
+                boxShadow: "0 4px 20px oklch(0 0 0 / 0.3)",
+              }}
             >
-              <Mail className="ml-2 h-4 w-4 shrink-0 text-muted-foreground" />
+              <Mail className="ml-2 h-4 w-4 shrink-0" style={{ color: "oklch(0.52 0.02 255)" }} />
               <input
                 type="email"
                 inputMode="email"
@@ -87,23 +119,34 @@ function NewsletterCta() {
                 aria-invalid={error ? true : undefined}
                 aria-describedby={error ? "newsletter-error" : undefined}
                 suppressHydrationWarning={true}
-                className="min-w-0 flex-1 bg-transparent py-1.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none disabled:opacity-60"
+                className="min-w-0 flex-1 bg-transparent py-1.5 text-sm outline-none disabled:opacity-60 placeholder:opacity-40"
+                style={{ color: "oklch(0.88 0.01 255)" }}
               />
               <button
                 type="submit"
                 disabled={status === "loading" || status === "success"}
                 suppressHydrationWarning={true}
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-[image:var(--gradient-primary)] px-3.5 py-2 text-sm font-medium text-white shadow-[var(--shadow-glow)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 cursor-pointer"
+                style={{
+                  background:
+                    status === "success"
+                      ? "linear-gradient(135deg, oklch(0.62 0.18 155), oklch(0.55 0.15 170))"
+                      : "linear-gradient(135deg, oklch(0.65 0.25 255), oklch(0.60 0.22 280))",
+                  boxShadow:
+                    status === "success"
+                      ? "0 4px 16px oklch(0.62 0.18 155 / 0.35)"
+                      : "0 4px 16px oklch(0.65 0.25 255 / 0.35)",
+                }}
               >
                 {status === "loading" ? (
                   <>
                     <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-                    <span className="hidden sm:inline">Subscribing</span>
+                    <span className="hidden sm:inline">Subscribing...</span>
                   </>
                 ) : status === "success" ? (
                   <>
                     <Check className="h-3.5 w-3.5" />
-                    <span className="hidden sm:inline">Subscribed</span>
+                    <span className="hidden sm:inline">Subscribed!</span>
                   </>
                 ) : (
                   <>
@@ -114,46 +157,71 @@ function NewsletterCta() {
               </button>
             </div>
             {error ? (
-              <p id="newsletter-error" className="pl-1 text-xs text-destructive">
+              <p id="newsletter-error" className="pl-1 text-xs" style={{ color: "oklch(0.65 0.22 25)" }}>
                 {error}
               </p>
             ) : (
-              <p className="pl-1 text-[11px] text-muted-foreground">
-                By subscribing you agree to our Privacy Policy.
+              <p className="pl-1 text-[11px]" style={{ color: "oklch(0.38 0.01 255)" }}>
+                By subscribing you agree to our Privacy Policy. Join 12,000+ institutional investors.
               </p>
             )}
           </div>
         </form>
       </div>
 
-      {/* Success Greeting Modal Popup */}
+      {/* Success Modal */}
       <Dialog open={isSuccessOpen} onOpenChange={setSuccessOpen}>
-        <DialogContent className="max-w-[420px] border border-emerald-500/30 bg-slate-950/95 p-6 shadow-[0_0_50px_-12px_rgba(16,185,129,0.2)] backdrop-blur-md rounded-2xl">
+        <DialogContent
+          className="max-w-[420px] p-6 rounded-2xl"
+          style={{
+            background: "oklch(0.09 0.01 260)",
+            border: "1px solid oklch(0.62 0.18 155 / 0.3)",
+            boxShadow: "0 24px 80px oklch(0 0 0 / 0.8), 0 0 60px oklch(0.62 0.18 155 / 0.1)",
+          }}
+        >
           <DialogHeader className="flex flex-col items-center justify-center text-center pb-2">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 mb-4 ring-8 ring-emerald-500/5 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-              <Check className="h-7 w-7" />
+            <div
+              className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl mb-4"
+              style={{
+                background: "oklch(0.62 0.18 155 / 0.1)",
+                border: "1px solid oklch(0.62 0.18 155 / 0.3)",
+                boxShadow: "0 0 30px oklch(0.62 0.18 155 / 0.2)",
+              }}
+            >
+              <Check className="h-7 w-7" style={{ color: "oklch(0.62 0.18 155)" }} />
             </div>
-            <DialogTitle className="text-xl font-bold tracking-tight text-white">
+            <DialogTitle className="text-xl font-bold tracking-tight" style={{ color: "oklch(0.92 0.01 255)" }}>
               Welcome to the Team!
             </DialogTitle>
-            <span className="text-[11px] font-bold tracking-wider text-emerald-400 uppercase bg-emerald-500/10 px-2 py-0.5 rounded-full mt-1.5">
+            <span
+              className="text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full mt-1.5"
+              style={{
+                color: "oklch(0.62 0.18 155)",
+                background: "oklch(0.62 0.18 155 / 0.1)",
+              }}
+            >
               Subscription Confirmed
             </span>
           </DialogHeader>
-          
           <div className="py-3 text-center space-y-3">
-            <p className="text-sm text-slate-300 leading-relaxed">
-              We are so excited to have you on board! We just sent a confirmation email to <span className="font-semibold text-white underline">{subscriberEmail}</span>.
+            <p className="text-sm leading-relaxed" style={{ color: "oklch(0.72 0.01 255)" }}>
+              We're so excited to have you on board! A confirmation email was sent to{" "}
+              <span className="font-semibold" style={{ color: "oklch(0.92 0.01 255)" }}>
+                {subscriberEmail}
+              </span>.
             </p>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Get ready to receive premium, analyst-grade stock market insights directly in your inbox every Monday morning.
+            <p className="text-xs leading-relaxed" style={{ color: "oklch(0.48 0.02 255)" }}>
+              Get ready to receive premium, analyst-grade investment insights every Monday morning.
             </p>
           </div>
-
           <div className="flex justify-center pt-4">
             <Button
               onClick={() => setSuccessOpen(false)}
-              className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:opacity-90 text-white cursor-pointer shadow-[0_0_20px_-3px_rgba(16,185,129,0.4)] font-semibold border-none rounded-xl"
+              className="w-full font-semibold cursor-pointer text-white border-none rounded-xl"
+              style={{
+                background: "linear-gradient(135deg, oklch(0.62 0.18 155), oklch(0.55 0.15 170))",
+                boxShadow: "0 4px 20px oklch(0.62 0.18 155 / 0.4)",
+              }}
             >
               Let's Explore
             </Button>
@@ -198,236 +266,168 @@ const LINKS = [
       { label: "Privacy Policy", href: "#" },
       { label: "Terms of Service", href: "#" },
       { label: "Disclaimer", href: "#" },
-      { label: "Security", href: "#" },
+      { label: "Compliance", href: "#" },
     ],
   },
 ];
 
+const TRUST_BADGES = [
+  { icon: Shield, label: "SOC2 Compliant" },
+  { icon: Globe, label: "180+ Markets" },
+  { icon: Zap, label: "Real-time Data" },
+  { icon: BarChart2, label: "Institutional Grade" },
+];
+
 export function Footer() {
-  const [isComingSoonOpen, setComingSoonOpen] = useState(false);
-  const [comingSoonFeature, setComingSoonFeature] = useState("");
-
-  const handleLinkClick = (label) => {
-    setComingSoonFeature(label);
-    setComingSoonOpen(true);
-  };
-
-  const getDialogDetails = () => {
-    switch (comingSoonFeature) {
-      case "About":
-        return {
-          title: "About Apex Research",
-          content: (
-            <div className="space-y-3 text-left">
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Apex Research is a financial technology innovation lab dedicated to democratizing institutional-grade investment tools. We combine high-speed inference processing and robust server caching to provide real-time investment synthesis.
-              </p>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Founded in 2025, our mission is to build highly accessible, secure, and data-rich terminals for quantitative analysts and individual investors alike.
-              </p>
-            </div>
-          ),
-          buttonText: "Close"
-        };
-      case "Careers":
-        return {
-          title: "Careers & Opportunities",
-          content: (
-            <div className="space-y-3 text-left">
-              <p className="text-sm text-muted-foreground">
-                We are actively looking for passionate engineering and research talent to join our team:
-              </p>
-              <ul className="space-y-2 text-xs text-muted-foreground list-disc pl-4">
-                <li><strong>AI Product Engineer (Intern)</strong> - Mumbai / Remote (Full-time conversion option)</li>
-                <li><strong>Quantitative Analyst Intern</strong> - Bengaluru / Remote</li>
-                <li><strong>Full-Stack Software Engineer (Node.js/React)</strong> - Remote</li>
-              </ul>
-              <p className="text-[11px] text-primary font-medium mt-2 pt-2 border-t border-border/40">
-                To apply, send your CV and portfolio to <span className="underline font-semibold">careers@apexresearch.com</span>.
-              </p>
-            </div>
-          ),
-          buttonText: "Close"
-        };
-      case "Blog":
-        return {
-          title: "Apex Research Engineering & Finance Blog",
-          content: (
-            <div className="space-y-3 text-left">
-              <div className="border-b border-border/40 pb-2">
-                <h4 className="text-xs font-bold text-foreground">1. Accelerating LLM Inference in Finance</h4>
-                <p className="text-[11px] text-muted-foreground">How we leverage Groq to fetch structured company data sheets in under 2 seconds.</p>
-              </div>
-              <div className="border-b border-border/40 pb-2">
-                <h4 className="text-xs font-bold text-foreground">2. Hybrid Caching in Fintech Apps</h4>
-                <p className="text-[11px] text-muted-foreground">A deep dive into fallback strategies combining MongoDB TTL indexes and in-memory key-value maps.</p>
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-foreground">3. Type-Safe Routing with TanStack Start</h4>
-                <p className="text-[11px] text-muted-foreground">Why we chose React 19 and TanStack Router over standard Next.js for our SPA terminal.</p>
-              </div>
-            </div>
-          ),
-          buttonText: "Close"
-        };
-      case "Contact":
-        return {
-          title: "Contact & Support",
-          content: (
-            <div className="space-y-3 text-left text-sm text-muted-foreground leading-relaxed">
-              <div className="flex flex-col gap-2 border-b border-border/40 pb-3">
-                <span>✉️ <strong>Support & General:</strong> support@apexresearch.com</span>
-                <span>✉️ <strong>Partnerships & Sales:</strong> partner@apexresearch.com</span>
-                <span>📍 <strong>Headquarters:</strong> Altuni AI Labs, Tech Hub, Bengaluru, India</span>
-              </div>
-              <p className="text-[11px] text-muted-foreground pt-1">
-                Our team responds to all inquiries within 12 business hours.
-              </p>
-            </div>
-          ),
-          buttonText: "Close"
-        };
-      case "Privacy Policy":
-        return {
-          title: "Privacy Policy",
-          content: (
-            <div className="space-y-3 text-left">
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Your privacy is highly important to us. Apex Research does not sell, share, or trade your personal data with third parties.
-              </p>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                We only collect minimal usage statistics to optimize search caching. Your custom API keys are saved locally in your browser and never transmitted to our servers.
-              </p>
-            </div>
-          ),
-          buttonText: "Close"
-        };
-      case "Terms of Service":
-        return {
-          title: "Terms of Service",
-          content: (
-            <div className="space-y-3 text-left">
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                By using Apex Research Terminal, you agree to use our platform solely for educational, analytical, and personal research purposes.
-              </p>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                The automated analysis sheets are generated by AI models and should not be treated as professional financial or investment advice.
-              </p>
-            </div>
-          ),
-          buttonText: "Close"
-        };
-      case "Disclaimer":
-        return {
-          title: "Financial Disclaimer",
-          content: (
-            <div className="space-y-3 text-left">
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                All financial info, metrics, and generated reports on this terminal are for information purposes only. They are not direct investment advice or buy/sell recommendations.
-              </p>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Always perform your own research and consult a licensed financial advisor before making any investment decisions. Apex Research is not liable for any financial losses.
-              </p>
-            </div>
-          ),
-          buttonText: "Close"
-        };
-      case "Security":
-        return {
-          title: "Security & Data Protection",
-          content: (
-            <div className="space-y-3 text-left">
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Apex Research Terminal uses industry-standard encryption protocols (HTTPS/SSL) to protect all API communications.
-              </p>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                We do not host or store your private credentials. Custom API keys are saved securely in your browser's local sandbox, keeping your access keys private to you.
-              </p>
-            </div>
-          ),
-          buttonText: "Close"
-        };
-      default:
-        return {
-          title: "Feature Under Construction",
-          content: (
-            <div className="py-2 text-center">
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                The <span className="font-semibold text-foreground">{comingSoonFeature}</span> section is currently under development. It will be available very soon!
-              </p>
-            </div>
-          ),
-          buttonText: "Okay"
-        };
-    }
-  };
-
-  const dialogDetails = getDialogDetails();
-
   return (
-    <footer className="relative mt-10 border-t border-border/60 overflow-hidden">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
-      <div className="pointer-events-none absolute -top-24 left-1/2 h-48 w-[600px] -translate-x-1/2 rounded-full bg-primary/10 blur-[100px]" />
+    <footer
+      className="relative overflow-hidden border-t"
+      style={{
+        background: "oklch(0.06 0.01 260)",
+        borderColor: "oklch(1 0 0 / 0.06)",
+      }}
+    >
+      {/* Subtle grid background */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-30"
+        style={{
+          backgroundImage:
+            "linear-gradient(oklch(1 0 0 / 0.025) 1px, transparent 1px), linear-gradient(90deg, oklch(1 0 0 / 0.025) 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
+        }}
+      />
+      {/* Top ambient glow */}
+      <div
+        className="pointer-events-none absolute left-1/2 top-0 h-40 w-2/3 -translate-x-1/2 opacity-20"
+        style={{
+          background: "radial-gradient(ellipse at center top, oklch(0.65 0.25 255 / 0.5), transparent 70%)",
+          filter: "blur(30px)",
+        }}
+      />
 
-      <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6">
+      <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6">
         <NewsletterCta />
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-6">
-          <div className="md:col-span-2">
-            <div className="flex items-center gap-3">
-              <div className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-xl border border-border shadow-[var(--shadow-glow)]">
-                <img
-                  src="/logo.png"
-                  alt="Apex Research Logo"
-                  className="h-full w-full object-cover"
-                />
+
+        {/* Separator */}
+        <div className="separator-glow mb-14" />
+
+        {/* Main Grid */}
+        <div className="grid grid-cols-2 gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_1fr]">
+          {/* Brand Column */}
+          <div className="col-span-2 lg:col-span-1">
+            {/* Logo */}
+            <div className="flex items-center gap-3 mb-5">
+              <div
+                className="flex h-10 w-10 items-center justify-center rounded-xl"
+                style={{
+                  background: "linear-gradient(135deg, oklch(0.65 0.25 255 / 0.15), oklch(0.55 0.22 280 / 0.08))",
+                  border: "1px solid oklch(0.65 0.25 255 / 0.3)",
+                  boxShadow: "0 0 20px oklch(0.65 0.25 255 / 0.15)",
+                }}
+              >
+                <img src="/logo.png" alt="Apex Research" className="h-6 w-6 object-contain" />
               </div>
               <div>
-                <div className="text-sm font-semibold tracking-tight">Apex Research Terminal</div>
-                <div className="text-[11px] text-muted-foreground">
-                  Enterprise financial intelligence
+                <div
+                  className="text-sm font-black tracking-[0.12em] uppercase"
+                  style={{ color: "oklch(0.92 0.01 255)" }}
+                >
+                  Apex Research
+                </div>
+                <div
+                  className="text-[10px] font-medium uppercase tracking-wider"
+                  style={{ color: "oklch(0.42 0.01 255)" }}
+                >
+                  Investment Terminal
                 </div>
               </div>
             </div>
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">
-              Institutional-grade investment research for public companies. Quantitative reasoning across
-              financials, news, risk and competitive positioning.
+
+            <p className="text-sm leading-relaxed mb-6 max-w-xs" style={{ color: "oklch(0.45 0.02 255)" }}>
+              Institutional-grade AI investment research platform. Analyze any company with quantitative
+              financial reasoning and real-time intelligence.
             </p>
 
-            <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-border bg-surface/60 px-3 py-1.5 text-[11px] text-muted-foreground">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-60" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
-              </span>
-              All systems operational
+            {/* Trust Badges */}
+            <div className="flex flex-wrap gap-2 mb-6">
+              {TRUST_BADGES.map(({ icon: Icon, label }) => (
+                <div
+                  key={label}
+                  className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-medium"
+                  style={{
+                    background: "oklch(1 0 0 / 0.03)",
+                    border: "1px solid oklch(1 0 0 / 0.07)",
+                    color: "oklch(0.48 0.02 255)",
+                  }}
+                >
+                  <Icon className="h-3 w-3" style={{ color: "oklch(0.65 0.25 255)" }} />
+                  {label}
+                </div>
+              ))}
             </div>
 
-            <div className="mt-6 flex items-center gap-2">
-              <SocialLink label="GitHub" onClick={() => handleLinkClick("GitHub")}>
-                <Github className="h-4 w-4" />
-              </SocialLink>
-              <SocialLink label="Twitter" onClick={() => handleLinkClick("Twitter")}>
-                <Twitter className="h-4 w-4" />
-              </SocialLink>
-              <SocialLink label="LinkedIn" onClick={() => handleLinkClick("LinkedIn")}>
-                <Linkedin className="h-4 w-4" />
-              </SocialLink>
+            {/* Social Links */}
+            <div className="flex gap-2">
+              {[
+                { icon: Github, href: "https://github.com", label: "GitHub" },
+                { icon: Twitter, href: "#", label: "Twitter" },
+                { icon: Linkedin, href: "#", label: "LinkedIn" },
+                { icon: Mail, href: "#", label: "Email" },
+              ].map(({ icon: Icon, href, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="grid h-9 w-9 place-items-center rounded-xl transition-all hover:scale-105"
+                  style={{
+                    background: "oklch(1 0 0 / 0.04)",
+                    border: "1px solid oklch(1 0 0 / 0.08)",
+                    color: "oklch(0.48 0.02 255)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "oklch(0.65 0.25 255 / 0.35)";
+                    e.currentTarget.style.color = "oklch(0.65 0.25 255)";
+                    e.currentTarget.style.boxShadow = "0 0 12px oklch(0.65 0.25 255 / 0.15)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.08)";
+                    e.currentTarget.style.color = "oklch(0.48 0.02 255)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
+                >
+                  <Icon className="h-4 w-4" />
+                </a>
+              ))}
             </div>
           </div>
 
+          {/* Link Columns */}
           {LINKS.map((col) => (
-            <div key={col.heading} className="md:col-span-1">
-              <h4 className="text-[11px] font-semibold uppercase tracking-widest text-foreground/90">
+            <div key={col.heading}>
+              <h4
+                className="text-[10px] font-bold uppercase tracking-[0.15em] mb-4"
+                style={{ color: "oklch(0.65 0.25 255)" }}
+              >
                 {col.heading}
               </h4>
-              <ul className="mt-4 space-y-2.5">
-                {col.items.map((l) => (
-                  <li key={l.label}>
-                    <button
-                      onClick={() => handleLinkClick(l.label)}
-                      className="text-sm text-muted-foreground transition-colors hover:text-foreground cursor-pointer text-left font-sans"
+              <ul className="flex flex-col gap-2.5">
+                {col.items.map((item) => (
+                  <li key={item.label}>
+                    <a
+                      href={item.href}
+                      className="flex items-center gap-1 text-sm transition-all group"
+                      style={{ color: "oklch(0.45 0.02 255)" }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = "oklch(0.72 0.01 255)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = "oklch(0.45 0.02 255)";
+                      }}
                     >
-                      {l.label}
-                    </button>
+                      {item.label}
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -435,59 +435,40 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-12 grid grid-cols-1 items-center gap-4 border-t border-border/60 pt-6 sm:grid-cols-[minmax(0,1fr)_auto]">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
-            <span>© {new Date().getFullYear()} Apex Research Terminal</span>
-            <span className="hidden sm:inline">·</span>
-            <span>
-              Powered by <span className="text-foreground/80">Groq</span> +{" "}
-              <span className="text-foreground/80">LangChain</span>
-            </span>
+        {/* Separator */}
+        <div className="separator-glow my-10" />
+
+        {/* Bottom Bar */}
+        <div className="flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
+          <div>
+            <p className="text-xs" style={{ color: "oklch(0.38 0.01 255)" }}>
+              © {new Date().getFullYear()} Apex Research. All rights reserved.
+            </p>
+            <p className="text-[10px] mt-1 max-w-lg leading-relaxed" style={{ color: "oklch(0.30 0.01 255)" }}>
+              Apex Research provides AI-generated content for informational purposes only. This is not financial
+              advice. Always conduct your own research before making investment decisions.
+            </p>
           </div>
-          <p className="text-[11px] leading-relaxed text-muted-foreground sm:text-right">
-            For research and educational purposes only. Not investment advice.
-          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            {["Privacy Policy", "Terms", "Disclaimer"].map((item) => (
+              <a
+                key={item}
+                href="#"
+                className="text-[11px] transition-colors"
+                style={{ color: "oklch(0.38 0.01 255)" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "oklch(0.65 0.25 255)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "oklch(0.38 0.01 255)";
+                }}
+              >
+                {item}
+              </a>
+            ))}
+          </div>
         </div>
       </div>
-
-      {/* Dynamic Info / Coming Soon Modal Popup */}
-      <Dialog open={isComingSoonOpen} onOpenChange={setComingSoonOpen}>
-        <DialogContent className="max-w-[420px] border border-border/80 bg-background/95 p-6 shadow-2xl backdrop-blur-md rounded-2xl">
-          <DialogHeader className="flex flex-col items-center justify-center text-center pb-2">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary mb-4 ring-8 ring-primary/5">
-              <Cpu className="h-6 w-6" />
-            </div>
-            <DialogTitle className="text-lg font-bold tracking-tight text-foreground">
-              {dialogDetails.title}
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="py-2">
-            {dialogDetails.content}
-          </div>
-
-          <div className="flex justify-center pt-4">
-            <Button
-              onClick={() => setComingSoonOpen(false)}
-              className="w-full bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 text-white cursor-pointer shadow-[0_0_15px_-3px_var(--color-primary)] font-semibold"
-            >
-              {dialogDetails.buttonText}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </footer>
-  );
-}
-
-function SocialLink({ children, label, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      aria-label={label}
-      className="grid h-9 w-9 place-items-center rounded-lg border border-border bg-surface/60 text-muted-foreground transition-all hover:border-primary/40 hover:bg-surface hover:text-foreground hover:shadow-[0_0_20px_-8px_var(--color-primary)] cursor-pointer"
-    >
-      {children}
-    </button>
   );
 }

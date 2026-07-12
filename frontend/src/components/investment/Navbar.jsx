@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Settings, User, Bell, Cpu } from "lucide-react";
+import { Settings, User, Bell, Cpu, ChevronDown } from "lucide-react";
 import { SettingsModal } from "./SettingsModal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,10 @@ const TICKER_ITEMS = [
   { symbol: "NFLX", price: "680.15", change: "+1.65%", positive: true },
   { symbol: "INFY", price: "22.40", change: "-0.35%", positive: false },
   { symbol: "TCS", price: "48.20", change: "+0.80%", positive: true },
+  { symbol: "RELIANCE", price: "2840.60", change: "+0.55%", positive: true },
+  { symbol: "SPY", price: "541.20", change: "+0.33%", positive: true },
+  { symbol: "QQQ", price: "462.80", change: "+0.61%", positive: true },
+  { symbol: "BABA", price: "84.20", change: "-1.42%", positive: false },
 ];
 
 export function Navbar() {
@@ -25,10 +29,29 @@ export function Navbar() {
   const [comingSoonFeature, setComingSoonFeature] = useState("");
   const [hasCustomKey, setHasCustomKey] = useState(false);
   const [activeTab, setActiveTab] = useState("terminal");
+  const [currentTime, setCurrentTime] = useState("");
 
   useEffect(() => {
     setHasCustomKey(!!localStorage.getItem("groq_api_key"));
   }, [isSettingsOpen]);
+
+  useEffect(() => {
+    const update = () => {
+      const now = new Date();
+      setCurrentTime(
+        now.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+          timeZone: "America/New_York",
+        }) + " EST"
+      );
+    };
+    update();
+    const timer = setInterval(update, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const navItems = [
     { id: "terminal", label: "Research Terminal" },
@@ -51,7 +74,7 @@ export function Navbar() {
       initial={{ y: -30, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="sticky top-0 z-50 bg-background/80 border-b border-b-border/40 backdrop-blur-md shadow-[0_1px_3px_oklch(0_0_0_/_0.02)]"
+      className="sticky top-0 z-50 glass-navbar"
     >
       <style>{`
         @keyframes marquee {
@@ -59,95 +82,219 @@ export function Navbar() {
           100% { transform: translateX(-50%); }
         }
         .animate-marquee {
-          animation: marquee 35s linear infinite;
+          animation: marquee 45s linear infinite;
+        }
+        .animate-marquee:hover {
+          animation-play-state: paused;
         }
       `}</style>
 
       {/* Live Stock Ticker Marquee */}
-      <div className="w-full bg-slate-950/95 text-white text-[10px] font-mono border-b border-border/10 py-1 overflow-hidden select-none">
-        <div className="flex w-max animate-marquee whitespace-nowrap">
-          {Array(3).fill(TICKER_ITEMS).flat().map((item, idx) => (
-            <span key={idx} className="mx-6 flex items-center gap-1.5">
-              <span className="font-semibold text-slate-300">{item.symbol}</span>
-              <span className="text-slate-100">${item.price}</span>
-              <span className={item.positive ? "text-emerald-400 font-medium" : "text-rose-400 font-medium"}>
-                {item.change}
+      <div
+        className="w-full overflow-hidden select-none py-1.5"
+        style={{
+          background: "linear-gradient(90deg, oklch(0.05 0.01 260), oklch(0.08 0.015 260), oklch(0.05 0.01 260))",
+          borderBottom: "1px solid oklch(1 0 0 / 0.06)",
+        }}
+      >
+        <div className="flex w-max animate-marquee whitespace-nowrap gap-0">
+          {Array(4)
+            .fill(TICKER_ITEMS)
+            .flat()
+            .map((item, idx) => (
+              <span key={idx} className="mx-5 inline-flex items-center gap-2 text-[10px] font-mono">
+                <span
+                  className="font-bold tracking-widest"
+                  style={{ color: "oklch(0.60 0.02 255)" }}
+                >
+                  {item.symbol}
+                </span>
+                <span style={{ color: "oklch(0.82 0.01 255)" }}>${item.price}</span>
+                <span
+                  className="font-semibold"
+                  style={{
+                    color: item.positive
+                      ? "oklch(0.62 0.18 155)"
+                      : "oklch(0.60 0.20 25)",
+                  }}
+                >
+                  {item.positive ? "▲" : "▼"} {item.change}
+                </span>
+                <span style={{ color: "oklch(1 0 0 / 0.15)" }}>│</span>
               </span>
-            </span>
-          ))}
+            ))}
         </div>
       </div>
 
+      {/* Main Nav Row */}
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         {/* Logo & Brand */}
-        <div className="flex items-center gap-3">
-          <div className="relative flex h-9.5 w-9.5 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-card shadow-[0_2px_8px_oklch(0_0_0_/_0.04)]">
-            <img src="/logo.png" alt="Apex Research Logo" className="h-5 w-5 object-contain" />
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-50" />
+        <div className="flex items-center gap-3.5 shrink-0">
+          <div
+            className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl"
+            style={{
+              background: "linear-gradient(135deg, oklch(0.65 0.25 255 / 0.15), oklch(0.55 0.22 280 / 0.08))",
+              border: "1px solid oklch(0.65 0.25 255 / 0.3)",
+              boxShadow: "0 0 20px oklch(0.65 0.25 255 / 0.15), inset 0 1px 0 oklch(1 0 0 / 0.1)",
+            }}
+          >
+            <img src="/logo.png" alt="Apex Research" className="h-6 w-6 object-contain" />
           </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-extrabold tracking-wider text-foreground leading-none flex items-center gap-1">
-              APEX{" "}
-              <span className="text-primary font-bold text-[10px] bg-primary/10 px-1.5 py-0.2 rounded font-mono">
-                RESEARCH
+          <div className="flex flex-col leading-none gap-0.5">
+            <div className="flex items-baseline gap-1.5">
+              <span
+                className="text-sm font-black tracking-[0.12em] uppercase"
+                style={{ color: "oklch(0.92 0.01 255)" }}
+              >
+                Apex
               </span>
-            </span>
-            <span className="text-[10px] font-medium text-muted-foreground/80 tracking-normal mt-0.5">
+              <span
+                className="text-[10px] font-bold tracking-[0.18em] uppercase px-1.5 py-0.5 rounded"
+                style={{
+                  background: "linear-gradient(135deg, oklch(0.65 0.25 255), oklch(0.60 0.22 280))",
+                  color: "oklch(0.99 0 0)",
+                }}
+              >
+                Research
+              </span>
+            </div>
+            <span
+              className="text-[9px] font-medium tracking-[0.15em] uppercase"
+              style={{ color: "oklch(0.48 0.02 255)" }}
+            >
               Institutional Terminal
             </span>
           </div>
         </div>
 
-        {/* Navigation Links - Centered & Premium */}
-        <nav className="hidden lg:flex items-center gap-1 rounded-full border border-border/60 bg-surface/30 p-1">
+        {/* Navigation Links */}
+        <nav
+          className="hidden lg:flex items-center gap-0.5 rounded-full p-1"
+          style={{
+            background: "oklch(1 0 0 / 0.03)",
+            border: "1px solid oklch(1 0 0 / 0.07)",
+          }}
+        >
           {navItems.map((item) => (
             <button
               key={item.id}
               onClick={() => handleNavClick(item.id, item.label)}
               suppressHydrationWarning={true}
-              className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer ${activeTab === item.id
-                  ? "text-primary bg-card border border-border/80 shadow-[0_1px_2px_oklch(0_0_0_/_0.02)]"
-                  : "text-muted-foreground hover:text-foreground hover:bg-surface/50"
-                }`}
+              className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 cursor-pointer ${
+                activeTab === item.id
+                  ? ""
+                  : "hover:bg-white/5"
+              }`}
+              style={
+                activeTab === item.id
+                  ? {
+                      background: "linear-gradient(135deg, oklch(0.65 0.25 255 / 0.15), oklch(0.55 0.22 280 / 0.1))",
+                      color: "oklch(0.72 0.22 255)",
+                      border: "1px solid oklch(0.65 0.25 255 / 0.25)",
+                      boxShadow: "0 0 12px oklch(0.65 0.25 255 / 0.1)",
+                    }
+                  : {
+                      color: "oklch(0.52 0.02 255)",
+                      border: "1px solid transparent",
+                    }
+              }
             >
               {item.label}
             </button>
           ))}
         </nav>
 
-        {/* Right Area: Status, Tools, Profile */}
-        <div className="flex items-center gap-3">
-          {/* Real-time Status Badge */}
-          <div className="hidden md:flex items-center gap-2 rounded-full border border-border/60 bg-surface/50 px-3 py-1.5">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-40" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
+        {/* Right Area */}
+        <div className="flex items-center gap-2.5">
+          {/* Live Clock */}
+          <div
+            className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-full font-mono text-[11px]"
+            style={{
+              background: "oklch(1 0 0 / 0.03)",
+              border: "1px solid oklch(1 0 0 / 0.07)",
+              color: "oklch(0.52 0.02 255)",
+            }}
+          >
+            <span
+              className="relative flex h-1.5 w-1.5 rounded-full"
+              style={{ background: "oklch(0.62 0.18 155)" }}
+            >
+              <span
+                className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-50"
+                style={{ background: "oklch(0.62 0.18 155)" }}
+              />
             </span>
-            <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
-              Terminal Engine: <span className="text-foreground font-semibold">Online</span>
-              {hasCustomKey && <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40" />}
+            <span style={{ color: "oklch(0.72 0.01 255)" }}>{currentTime}</span>
+          </div>
+
+          {/* Terminal Status */}
+          <div
+            className="hidden md:flex items-center gap-2 rounded-full px-3 py-1.5"
+            style={{
+              background: "oklch(1 0 0 / 0.03)",
+              border: "1px solid oklch(1 0 0 / 0.07)",
+            }}
+          >
+            <span className="relative flex h-1.5 w-1.5">
+              <span
+                className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-50"
+                style={{ background: "oklch(0.62 0.18 155)" }}
+              />
+              <span
+                className="relative inline-flex h-1.5 w-1.5 rounded-full"
+                style={{ background: "oklch(0.62 0.18 155)" }}
+              />
+            </span>
+            <span className="text-[10px] font-medium" style={{ color: "oklch(0.48 0.02 255)" }}>
+              Terminal{" "}
+              <span style={{ color: "oklch(0.62 0.18 155)" }} className="font-bold">
+                Online
+              </span>
               {hasCustomKey && (
-                <span className="text-[9px] font-bold text-primary tracking-wide uppercase">
+                <span
+                  className="ml-1.5 text-[9px] font-bold tracking-wider uppercase px-1 py-0.5 rounded"
+                  style={{
+                    color: "oklch(0.65 0.25 255)",
+                    background: "oklch(0.65 0.25 255 / 0.1)",
+                  }}
+                >
                   Custom Key
                 </span>
               )}
             </span>
           </div>
 
-          {/* Action Buttons */}
+          {/* Notifications */}
           <IconButton label="Notifications" onClick={() => toast.success("No new system alerts.")}>
             <Bell className="h-4 w-4" />
           </IconButton>
+
+          {/* Settings */}
           <IconButton onClick={() => setSettingsOpen(true)} label="Settings">
             <Settings className="h-4 w-4" />
           </IconButton>
 
-          {/* User Profile Info Pill */}
-          <div className="flex items-center gap-2 rounded-full border border-border/60 bg-surface/40 p-1 sm:pl-3 hover:bg-surface/70 transition-all cursor-pointer">
-            <span className="hidden sm:block text-xs font-semibold text-foreground/90 tracking-tight pr-1">
-              A. Analyst
+          {/* User Profile */}
+          <div
+            className="flex items-center gap-2 rounded-full p-1 pl-3 cursor-pointer transition-all hover:scale-[1.02]"
+            style={{
+              background: "oklch(1 0 0 / 0.04)",
+              border: "1px solid oklch(1 0 0 / 0.08)",
+            }}
+          >
+            <span
+              className="hidden sm:block text-xs font-semibold tracking-tight"
+              style={{ color: "oklch(0.72 0.01 255)" }}
+            >
+              Analyst
             </span>
-            <div className="grid h-7 w-7 place-items-center rounded-full bg-gradient-to-br from-primary to-primary-glow text-white text-xs font-bold shadow-sm">
+            <div
+              className="grid h-7 w-7 place-items-center rounded-full text-white text-xs font-bold"
+              style={{
+                background: "linear-gradient(135deg, oklch(0.65 0.25 255), oklch(0.60 0.22 280))",
+                boxShadow: "0 0 12px oklch(0.65 0.25 255 / 0.4)",
+              }}
+            >
               <User className="h-3.5 w-3.5" />
             </div>
           </div>
@@ -157,28 +304,52 @@ export function Navbar() {
       {/* Settings Modal */}
       <SettingsModal isOpen={isSettingsOpen} onClose={() => setSettingsOpen(false)} />
 
-      {/* Coming Soon Modal Popup */}
+      {/* Coming Soon Modal */}
       <Dialog open={isComingSoonOpen} onOpenChange={setComingSoonOpen}>
-        <DialogContent className="max-w-[400px] border border-border/80 bg-background/95 p-6 shadow-2xl backdrop-blur-md rounded-2xl">
+        <DialogContent
+          className="max-w-[400px] p-6 rounded-2xl"
+          style={{
+            background: "oklch(0.11 0.01 260)",
+            border: "1px solid oklch(1 0 0 / 0.1)",
+            boxShadow: "0 24px 80px oklch(0 0 0 / 0.8), 0 0 0 1px oklch(0.65 0.25 255 / 0.1)",
+          }}
+        >
           <DialogHeader className="flex flex-col items-center justify-center text-center pb-2">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary mb-4 ring-8 ring-primary/5">
-              <Cpu className="h-6 w-6" />
+            <div
+              className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl mb-4"
+              style={{
+                background: "linear-gradient(135deg, oklch(0.65 0.25 255 / 0.15), oklch(0.55 0.22 280 / 0.1))",
+                border: "1px solid oklch(0.65 0.25 255 / 0.25)",
+                boxShadow: "0 0 30px oklch(0.65 0.25 255 / 0.15)",
+              }}
+            >
+              <Cpu className="h-6 w-6" style={{ color: "oklch(0.65 0.25 255)" }} />
             </div>
-            <DialogTitle className="text-lg font-bold tracking-tight text-foreground">
+            <DialogTitle
+              className="text-lg font-bold tracking-tight"
+              style={{ color: "oklch(0.92 0.01 255)" }}
+            >
               Module Synchronizing
             </DialogTitle>
           </DialogHeader>
-
           <div className="py-2 text-center">
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              The <span className="font-semibold text-foreground">{comingSoonFeature}</span> panel is currently offline for system upgrades. It will be available in the next terminal release.
+            <p className="text-sm leading-relaxed" style={{ color: "oklch(0.52 0.02 255)" }}>
+              The{" "}
+              <span className="font-semibold" style={{ color: "oklch(0.72 0.01 255)" }}>
+                {comingSoonFeature}
+              </span>{" "}
+              panel is currently offline for system upgrades. It will be available in the next terminal release.
             </p>
           </div>
-
           <div className="flex justify-center pt-4">
             <Button
               onClick={() => setComingSoonOpen(false)}
-              className="w-full bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 text-white cursor-pointer shadow-[0_0_15px_-3px_var(--color-primary)] font-semibold"
+              className="w-full font-semibold cursor-pointer text-white"
+              style={{
+                background: "linear-gradient(135deg, oklch(0.65 0.25 255), oklch(0.60 0.22 280))",
+                boxShadow: "0 4px 20px oklch(0.65 0.25 255 / 0.35)",
+                border: "none",
+              }}
             >
               Acknowledge
             </Button>
@@ -195,7 +366,22 @@ function IconButton({ children, label, onClick }) {
       onClick={onClick}
       aria-label={label}
       suppressHydrationWarning={true}
-      className="grid h-9 w-9 place-items-center rounded-xl border border-border/60 bg-surface/40 text-muted-foreground transition-all hover:border-primary/30 hover:bg-surface hover:text-foreground hover:shadow-[0_2px_8px_oklch(0_0_0_/_0.02)] cursor-pointer"
+      className="grid h-9 w-9 place-items-center rounded-xl transition-all cursor-pointer hover:scale-105"
+      style={{
+        background: "oklch(1 0 0 / 0.04)",
+        border: "1px solid oklch(1 0 0 / 0.08)",
+        color: "oklch(0.52 0.02 255)",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = "oklch(0.65 0.25 255 / 0.35)";
+        e.currentTarget.style.color = "oklch(0.72 0.22 255)";
+        e.currentTarget.style.boxShadow = "0 0 12px oklch(0.65 0.25 255 / 0.15)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.08)";
+        e.currentTarget.style.color = "oklch(0.52 0.02 255)";
+        e.currentTarget.style.boxShadow = "none";
+      }}
     >
       {children}
     </button>
